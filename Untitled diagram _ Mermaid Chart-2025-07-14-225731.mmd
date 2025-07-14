@@ -1,0 +1,78 @@
+gantt
+    title Proyecto VitalCare Watch - Planificación Integral
+    dateFormat  YYYY-MM-DD
+    axisFormat  %b '%y
+    
+    section 1️⃣ Análisis
+    Investigación de mercado                 :a1, 2025-01-01, 7d
+    Análisis de necesidades de usuarios      :a2, after a1, 10d
+    Definición de perfiles (paciente/tutor)  :a3, after a1, 8d
+    Especificación de requisitos funcionales :a4, after a2, 8d
+    Especificación de requisitos no funcionales :a5, after a2, 8d
+    Definición de alcance                    :a6, after a4 a5, 5d
+    Documento IEEE 830 (Requisitos)          :milestone, after a6, 0d
+    
+    section 2️⃣ Diseño
+    Arquitectura 4+1                         :d1, after a6, 10d
+    Diseño UML (casos de uso)                :d2, after d1, 8d
+    Diseño UML (clases y componentes)        :d3, after d1, 8d
+    Diseño UX/UI app móvil                   :d4, after d2, 12d
+    Diseño UX/UI reloj (WCAG AA)             :d5, after d2, 12d
+    Mockups alta fidelidad                   :d6, after d4 d5, 10d
+    Validación con usuarios finales          :d7, after d6, 6d
+    Diseño aprobado                          :milestone, after d7, 0d
+    
+    section 3️⃣ Desarrollo Hardware
+    Selección de componentes                 :h1, after d7, 10d
+    Integración sensores biomédicos          :h2, after h1, 15d
+    Integración GPS                          :h3, after h1, 12d
+    Desarrollo firmware base                 :h4, after h1, 20d
+    Optimización batería                     :h5, after h2 h3 h4, 10d
+    Prototipo hardware v1                    :milestone, after h5, 0d
+    
+    section 4️⃣ Desarrollo Software
+    Arquitectura backend                     :s1, after d7, 12d
+    Desarrollo API (Core)                    :s2, after s1, 15d
+    Desarrollo app iOS                       :s3, after s1, 25d
+    Desarrollo app Android                   :s4, after s1, 25d
+    Sistema alertas y notificaciones         :s5, after s2, 10d
+    Integración servicios en la nube         :s6, after s2, 12d
+    Sincronización reloj-app                 :s7, after h5 s5, 15d
+    Sistema de geolocalización               :s8, after s6, 10d
+    Integración sensores-software            :s9, after s7 s8, 10d
+    Prototipo software v1                    :milestone, after s9, 0d
+    
+    section 5️⃣ Testing
+    Planificación pruebas (ISO 25000)        :t1, after s9, 6d
+    Pruebas unitarias                        :t2, after t1, 10d
+    Pruebas funcionales                      :t3, after t2, 12d
+    Pruebas seguridad y cifrado              :t4, after t1, 12d
+    Pruebas rendimiento y latencia           :t5, after t1, 10d
+    Pruebas usabilidad adultos mayores       :t6, after t3 t4 t5, 15d
+    Corrección bugs críticos                 :t7, after t6, 12d
+    Validación beta con usuarios reales      :t8, after t7, 15d
+    Testing completado                        :milestone, after t8, 0d
+    
+    section 6️⃣ Implementación
+    Configuración entorno producción         :i1, after t8, 7d
+    Certificación médica                     :i2, after i1, 20d
+    Producción primera serie relojes         :i3, after i1, 15d
+    Publicación apps en tiendas              :i4, after i1, 8d
+    Capacitación personal soporte            :i5, after i4, 10d
+    Documentación técnica final              :i6, after i4, 12d
+    Lanzamiento oficial                      :milestone, after i2 i3 i5 i6, 0d
+    
+    section 7️⃣ Mantenimiento
+    Monitoreo post-lanzamiento               :m1, after i6, 30d
+    Corrección bugs detectados               :m2, after m1, 15d
+    Actualizaciones software                 :m3, after m2, 20d
+    Evaluación métricas y KPIs               :m4, after m1, 60d
+    Análisis feedback usuarios               :m5, after m4, 15d
+    Plan mejoras v2                          :m6, after m5, 20d
+    
+    section 📊 Gestión Proyecto
+    Coordinación equipo (Kanban)             :2025-01-01, 365d
+    Control presupuesto                      :2025-01-01, 365d
+    Gestión riesgos                          :2025-01-01, 365d
+    Reuniones semanales                      :2025-01-01, 365d
+    Documentación y reportes                 :2025-01-01, 365d
