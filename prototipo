@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>VitalCare Watch - Reloj Centralizado</title>
+    <title>VitalCare Watch - Reloj Inteligente para Adultos Mayores</title>
     <!-- Font Awesome para iconos bonitos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -18,15 +18,15 @@
             height: 100vh;
         }
         .watch {
-            width: 400px;
-            height: 400px;
+            width: 450px;
+            height: 450px;
             background: 
                 linear-gradient(rgba(35,39,47,0.7), rgba(0,0,0,0.8)),
                 url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=400&h=400&facepad=2') center center/cover no-repeat;
             border-radius: 50%;
             border: 6px solid #0af;
             box-shadow: 0 0 30px #0af, 0 0 0 8px #222 inset;
-            padding: 20px;
+            padding: 25px;
             color: white;
             display: flex;
             flex-direction: column;
@@ -85,11 +85,11 @@
         .sos-btn {
             background: linear-gradient(90deg, #ff4d4d 60%, #ff0000 100%);
             color: white;
-            padding: 14px;
+            padding: 16px;
             border: none;
             border-radius: 12px;
             margin: 18px auto 0 auto;
-            font-size: 1.1em;
+            font-size: 1.2em;
             cursor: pointer;
             width: 90%;
             font-weight: bold;
@@ -115,21 +115,23 @@
             background-color: #0af;
             border: none;
             color: white;
-            padding: 7px 0;
-            border-radius: 7px;
+            padding: 12px 0;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85em;
-            width: 78px;
-            margin: 2px;
+            font-size: 0.9em;
+            width: 85px;
+            margin: 3px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 6px;
-            transition: background 0.2s;
+            transition: all 0.2s;
             text-shadow: 0 2px 8px #000;
+            font-weight: bold;
         }
         .menu button:hover, .menu button:focus {
             background-color: #08c;
+            transform: scale(1.05);
         }
         /* Mejoras para accesibilidad */
         .menu button, .sos-btn {
@@ -194,14 +196,132 @@
         .gps-btn:active {
             transform: scale(0.97);
         }
+        
+        /* Estilos para botones de voz */
+        .voice-btn {
+            background: linear-gradient(90deg, #28a745 60%, #20c997 100%);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            margin: 10px auto;
+            font-size: 1em;
+            cursor: pointer;
+            width: 90%;
+            font-weight: bold;
+            box-shadow: 0 0 10px #28a745;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.1s;
+            text-shadow: 0 2px 8px #000;
+        }
+        
+        .voice-btn:active {
+            transform: scale(0.97);
+        }
+        
+        /* Alertas y notificaciones */
+        .alert-box {
+            background: linear-gradient(90deg, #ff6b6b 60%, #ff5252 100%);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            font-size: 1em;
+            text-align: center;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 15px #ff6b6b;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        /* Configuración interactiva */
+        .config-item {
+            background: rgba(24,28,34,0.85);
+            border-radius: 8px;
+            margin: 8px 0;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        
+        .config-toggle {
+            background: #0af;
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+        
+        .config-toggle:hover {
+            background: #08c;
+        }
+        
+        .config-toggle.off {
+            background: #666;
+        }
+        
+        /* Nuevos signos vitales */
+        .vital-alert {
+            color: #ff6b6b !important;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.5; }
+        }
+        
+        /* Modo noche automático */
+        .night-mode {
+            background: linear-gradient(rgba(10,10,10,0.9), rgba(0,0,0,0.95));
+        }
+        
+        /* Efectos de sonido visual */
+        .sound-wave {
+            animation: soundWave 1s infinite;
+        }
+        
+        @keyframes soundWave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.3); }
+        }
+        
+        /* Conectividad */
+        .connection-status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 0.8em;
+            color: #0af;
+        }
+        
+        .connection-status.disconnected {
+            color: #ff4d4d;
+        }
     </style>
 </head>
 <body>
 
 <div class="watch">
+    <div class="connection-status" id="connectionStatus">
+        <i class="fa-solid fa-wifi"></i> Conectado
+    </div>
+    
     <div class="topbar">
         <div id="clock"><i class="fa-regular fa-clock"></i> --:--</div>
-        <div><i class="fa-solid fa-battery-three-quarters"></i> 88%</div>
+        <div><i class="fa-solid fa-battery-three-quarters"></i> <span id="battery">88%</span></div>
     </div>
 
     <!-- Pantalla principal -->
@@ -209,49 +329,113 @@
         <div class="title"><i class="fa-solid fa-heart-pulse"></i> VitalCare Watch</div>
         <div class="value"><i class="fa-solid fa-heart"></i> BPM: <span id="bpm">--</span></div>
         <div class="value"><i class="fa-solid fa-lungs"></i> O₂: <span id="oxigeno">--</span>%</div>
+        <div class="value"><i class="fa-solid fa-stethoscope"></i> P.A.: <span id="presion">--/--</span></div>
         <div class="value"><i class="fa-solid fa-shoe-prints"></i> Pasos: <span id="pasos">--</span></div>
-        <button class="sos-btn" id="sosBtn"><i class="fa-solid fa-triangle-exclamation"></i> BOTÓN SOS</button>
+        <div class="value"><i class="fa-solid fa-thermometer-half"></i> Temp: <span id="temperatura">--</span>°C</div>
+        <button class="sos-btn" id="sosBtn"><i class="fa-solid fa-triangle-exclamation"></i> EMERGENCIA SOS</button>
     </div>
 
     <!-- Historial -->
     <div id="screen2" class="screen">
         <div class="title"><i class="fa-solid fa-chart-line"></i> Historial</div>
-        <div class="history"><i class="fa-solid fa-clock"></i> 12:00 - 76 BPM / 98%</div>
-        <div class="history alert"><i class="fa-solid fa-heart-circle-exclamation"></i> 13:05 - 125 BPM / 96% <span style="color:#ff4d4d;">&#9888;</span></div>
+        <div class="history"><i class="fa-solid fa-clock"></i> 12:00 - 76 BPM / 98% O₂</div>
+        <div class="history alert"><i class="fa-solid fa-heart-circle-exclamation"></i> 13:05 - 125 BPM / 96% O₂ <span style="color:#ff4d4d;">⚠️</span></div>
         <div class="history fall"><i class="fa-solid fa-person-falling"></i> 14:35 - Caída detectada</div>
-        <div class="history"><i class="fa-solid fa-clock"></i> 15:00 - 82 BPM / 97%</div>
+        <div class="history"><i class="fa-solid fa-clock"></i> 15:00 - 82 BPM / 97% O₂</div>
+        <div class="history"><i class="fa-solid fa-thermometer-half"></i> 15:30 - Temp: 36.5°C</div>
+        <div class="history alert"><i class="fa-solid fa-stethoscope"></i> 16:00 - P.A.: 145/90 <span style="color:#ff4d4d;">⚠️</span></div>
+        <div class="history"><i class="fa-solid fa-cloud-upload-alt"></i> 16:05 - Datos sincronizados con la nube</div>
     </div>
 
     <!-- Configuración -->
     <div id="screen3" class="screen">
         <div class="title"><i class="fa-solid fa-gear"></i> Configuración</div>
-        <div class="msg"><i class="fa-solid fa-heart-circle-exclamation"></i> Umbral BPM: <strong>120</strong></div>
-        <div class="msg"><i class="fa-solid fa-vibrate"></i> Vibración: <strong>Activada</strong></div>
-        <div class="msg"><i class="fa-solid fa-user-doctor"></i> Notificaciones: <strong>Tutor + Médico</strong></div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-heart-circle-exclamation"></i> Umbral BPM</div>
+            <select id="bpmThreshold" class="config-toggle" onchange="updateBpmThreshold()">
+                <option value="100">100</option>
+                <option value="120" selected>120</option>
+                <option value="140">140</option>
+            </select>
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-vibrate"></i> Vibración</div>
+            <button class="config-toggle" id="vibrationToggle" onclick="toggleVibration()">Activada</button>
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-capsules"></i> Recordatorio Medicación</div>
+            <input type="time" id="medicTime" class="config-toggle" value="08:00" onchange="updateMedicTime()">
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-capsules"></i> Recordatorio Medicación 2</div>
+            <input type="time" id="medicTime2" class="config-toggle" value="20:00" onchange="updateMedicTime2()">
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-user-doctor"></i> Notificaciones</div>
+            <button class="config-toggle" id="notificationToggle" onclick="toggleNotifications()">Tutor + Médico</button>
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-volume-high"></i> Volumen</div>
+            <select id="volumeLevel" class="config-toggle" onchange="updateVolume()">
+                <option value="bajo">Bajo</option>
+                <option value="medio" selected>Medio</option>
+                <option value="alto">Alto</option>
+            </select>
+        </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-bluetooth"></i> Bluetooth</div>
+            <button class="config-toggle" id="bluetoothToggle" onclick="toggleBluetooth()">Conectado</button>
+        </div>
     </div>
 
     <!-- Mensajes -->
     <div id="screen4" class="screen">
         <div class="title"><i class="fa-solid fa-envelope"></i> Mensajes</div>
-        <div class="msg"><i class="fa-solid fa-bell"></i> “No olvides tu medicación” <span style="margin-left:auto;font-size:0.9em;color:#aaa;">12:30</span></div>
-        <div class="msg"><i class="fa-solid fa-user"></i> “Voy en camino” <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
+        <div class="msg"><i class="fa-solid fa-bell"></i> "No olvides tu medicación matutina" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">08:30</span></div>
+        <div class="msg"><i class="fa-solid fa-user"></i> "Voy en camino, estaré ahí en 10 minutos" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
+        <div class="msg"><i class="fa-solid fa-microphone"></i> "Mensaje de voz del tutor" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
+        <div class="msg"><i class="fa-solid fa-user-doctor"></i> "Recordatorio: Consulta médica mañana a las 10:00" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Dr. García</span></div>
+        <button class="voice-btn" onclick="recordVoiceMessage()">
+            <i class="fa-solid fa-microphone"></i> Grabar Mensaje de Voz
+        </button>
+        <button class="voice-btn" onclick="playVoiceMessage()">
+            <i class="fa-solid fa-play"></i> Reproducir Mensaje Personal
+        </button>
+        <button class="voice-btn" onclick="sendTextMessage()">
+            <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje al Tutor
+        </button>
+        <button class="voice-btn" onclick="emergencyCall()">
+            <i class="fa-solid fa-phone"></i> Llamar al Tutor
+        </button>
     </div>
 
     <!-- Recordatorios -->
     <div id="screen5" class="screen">
         <div class="title"><i class="fa-solid fa-bell"></i> Recordatorios</div>
-        <div class="reminder"><i class="fa-solid fa-capsules"></i> Pastilla diaria <span style="margin-left:auto;font-size:0.9em;color:#aaa;">13:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-capsules"></i> Medicación matutina <span style="margin-left:auto;font-size:0.9em;color:#aaa;" id="medicReminder1">08:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-capsules"></i> Medicación nocturna <span style="margin-left:auto;font-size:0.9em;color:#aaa;" id="medicReminder2">20:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-utensils"></i> Desayuno <span style="margin-left:auto;font-size:0.9em;color:#aaa;">09:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-utensils"></i> Almuerzo <span style="margin-left:auto;font-size:0.9em;color:#aaa;">13:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-utensils"></i> Cena <span style="margin-left:auto;font-size:0.9em;color:#aaa;">19:00</span></div>
         <div class="reminder"><i class="fa-solid fa-bed"></i> Hora de dormir <span style="margin-left:auto;font-size:0.9em;color:#aaa;">22:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-dumbbell"></i> Ejercicios <span style="margin-left:auto;font-size:0.9em;color:#aaa;">16:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-user-doctor"></i> Consulta médica <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Mañana 10:00</span></div>
     </div>
 
     <!-- GPS -->
     <div id="screen6" class="screen">
         <div class="title"><i class="fa-solid fa-location-dot"></i> Ubicación GPS</div>
         <div class="msg" id="gpsStatus">
-            <i class="fa-solid fa-location-crosshairs"></i> Presiona el botón para obtener ubicación.
+            <i class="fa-solid fa-location-crosshairs"></i> Presiona el botón para obtener tu ubicación actual.
         </div>
         <button class="gps-btn" onclick="getGPS()">
-            <i class="fa-solid fa-location-dot"></i> Obtener ubicación
+            <i class="fa-solid fa-location-dot"></i> Obtener Ubicación
+        </button>
+        <button class="gps-btn" onclick="shareLocation()">
+            <i class="fa-solid fa-share-from-square"></i> Compartir con Tutor
+        </button>
+        <button class="gps-btn" onclick="enableLocationMonitoring()">
+            <i class="fa-solid fa-satellite-dish"></i> Monitoreo Constante
         </button>
     </div>
 
@@ -267,65 +451,458 @@
 </div>
 
 <script>
+    // Variables globales para configuración
+    let config = {
+        bpmThreshold: 120,
+        vibrationEnabled: true,
+        medicationTime1: "08:00",
+        medicationTime2: "20:00",
+        notificationLevel: "tutor_medico",
+        volumeLevel: "medio",
+        bluetoothEnabled: true,
+        locationMonitoring: false,
+        isRecording: false,
+        lastMedicationAlert: null,
+        cloudSyncEnabled: true
+    };
+
+    // Función principal para cambiar pantallas
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('screen' + id).classList.add('active');
+        
+        // Agregar efecto de vibración simulada
+        if (config.vibrationEnabled) {
+            document.querySelector('.watch').style.animation = 'vibrate 0.1s';
+            setTimeout(() => {
+                document.querySelector('.watch').style.animation = '';
+            }, 100);
+        }
     }
 
+    // Actualizar signos vitales con alertas inteligentes
     function updateVitals() {
-        const bpm = Math.floor(Math.random() * 40) + 70;
-        const ox = Math.floor(Math.random() * 5) + 95;
-        const pasos = Math.floor(Math.random() * 10000);
+        const bpm = Math.floor(Math.random() * 50) + 60;
+        const ox = Math.floor(Math.random() * 8) + 94;
+        const systolic = Math.floor(Math.random() * 60) + 110;
+        const diastolic = Math.floor(Math.random() * 30) + 60;
+        const pasos = Math.floor(Math.random() * 15000) + 2000;
+        const temp = (Math.random() * 2 + 36).toFixed(1);
+        
+        // Actualizar valores en pantalla
         document.getElementById('bpm').textContent = bpm;
         document.getElementById('oxigeno').textContent = ox;
-        document.getElementById('pasos').textContent = pasos;
+        document.getElementById('presion').textContent = systolic + "/" + diastolic;
+        document.getElementById('pasos').textContent = pasos.toLocaleString();
+        document.getElementById('temperatura').textContent = temp;
+        
+        // Alertas inteligentes
+        checkVitalAlerts(bpm, ox, systolic, diastolic, temp);
+        
+        // Simular sincronización con la nube
+        if (config.cloudSyncEnabled && Math.random() < 0.1) {
+            syncToCloud();
+        }
     }
 
+    // Sistema de alertas inteligentes
+    function checkVitalAlerts(bpm, ox, systolic, diastolic, temp) {
+        const bpmElement = document.getElementById('bpm');
+        const oxElement = document.getElementById('oxigeno');
+        const presionElement = document.getElementById('presion');
+        const tempElement = document.getElementById('temperatura');
+        
+        // Resetear alertas
+        [bpmElement, oxElement, presionElement, tempElement].forEach(el => {
+            el.classList.remove('vital-alert');
+        });
+        
+        // Verificar alertas
+        if (bpm > config.bpmThreshold || bpm < 50) {
+            bpmElement.classList.add('vital-alert');
+            sendAlert(`⚠️ Frecuencia cardíaca anormal: ${bpm} BPM`);
+            notifyTutor(`Alerta: Frecuencia cardíaca ${bpm} BPM`);
+        }
+        
+        if (ox < 95) {
+            oxElement.classList.add('vital-alert');
+            sendAlert(`⚠️ Oxígeno bajo: ${ox}%`);
+            notifyTutor(`Alerta: Oxígeno bajo ${ox}%`);
+        }
+        
+        if (systolic > 140 || diastolic > 90) {
+            presionElement.classList.add('vital-alert');
+            sendAlert(`⚠️ Presión arterial alta: ${systolic}/${diastolic}`);
+            notifyTutor(`Alerta: Presión arterial ${systolic}/${diastolic}`);
+        }
+        
+        if (temp > 37.5 || temp < 35.5) {
+            tempElement.classList.add('vital-alert');
+            sendAlert(`⚠️ Temperatura anormal: ${temp}°C`);
+            notifyTutor(`Alerta: Temperatura ${temp}°C`);
+        }
+    }
+
+    // Sistema de alertas
+    function sendAlert(message) {
+        if (config.notificationLevel === "tutor_medico") {
+            console.log("Enviando alerta a tutor y médico:", message);
+        }
+        
+        // Simular notificación visual
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert-box';
+        alertDiv.innerHTML = `<i class="fa-solid fa-exclamation-triangle"></i> ${message}`;
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    // Notificar al tutor
+    function notifyTutor(message) {
+        console.log("Notificando al tutor:", message);
+        // Simular envío de notificación al tutor
+        addToHistory(`📱 Tutor notificado: ${message}`);
+    }
+
+    // Actualizar reloj con verificación de recordatorios
     function updateClock() {
         const now = new Date();
         const h = now.getHours().toString().padStart(2, '0');
         const m = now.getMinutes().toString().padStart(2, '0');
         document.getElementById('clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${h}:${m}`;
-
-        // Alerta de recordatorio de medicación a las 13:00
-        if (h === "13" && m === "00" && !window.medicAlerted) {
-            alert("¡Hora de tomar tu medicación!");
-            window.medicAlerted = true;
-        }
-        // Reinicia alerta al cambiar de minuto
-        if (m !== "00") window.medicAlerted = false;
+        
+        // Verificar recordatorios de medicación
+        checkMedicationReminders(h, m);
+        
+        // Simular descarga de batería
+        updateBattery();
+        
+        // Verificar conectividad
+        updateConnectionStatus();
     }
 
-    // Simula aviso al tutor al presionar SOS
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('sosBtn').onclick = function() {
-            alert('¡SOS enviado!\nEl tutor ha sido notificado.');
+    // Sistema de recordatorios de medicación
+    function checkMedicationReminders(hour, minute) {
+        const currentTime = `${hour}:${minute}`;
+        
+        if (currentTime === config.medicationTime1 && config.lastMedicationAlert !== currentTime) {
+            medicationAlert("¡Hora de tu medicación matutina!");
+            config.lastMedicationAlert = currentTime;
         }
-    });
+        
+        if (currentTime === config.medicationTime2 && config.lastMedicationAlert !== currentTime) {
+            medicationAlert("¡Hora de tu medicación nocturna!");
+            config.lastMedicationAlert = currentTime;
+        }
+    }
 
-    // GPS simulado
+    // Alerta de medicación
+    function medicationAlert(message) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert-box';
+        alertDiv.innerHTML = `<i class="fa-solid fa-capsules"></i> ${message}`;
+        alertDiv.style.position = 'fixed';
+        alertDiv.style.top = '50%';
+        alertDiv.style.left = '50%';
+        alertDiv.style.transform = 'translate(-50%, -50%)';
+        alertDiv.style.zIndex = '9999';
+        document.body.appendChild(alertDiv);
+        
+        // Reproducir sonido (simulado)
+        playSound();
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 10000);
+    }
+
+    // Simular batería
+    function updateBattery() {
+        const batteryElement = document.getElementById('battery');
+        let currentBattery = parseInt(batteryElement.textContent);
+        
+        // Simular descarga lenta
+        if (Math.random() < 0.01) { // 1% de probabilidad cada minuto
+            currentBattery = Math.max(0, currentBattery - 1);
+            batteryElement.textContent = currentBattery + '%';
+            
+            if (currentBattery <= 20) {
+                sendAlert(`🔋 Batería baja: ${currentBattery}%`);
+                notifyTutor(`Batería baja: ${currentBattery}%`);
+            }
+        }
+    }
+
+    // Actualizar estado de conectividad
+    function updateConnectionStatus() {
+        const connectionElement = document.getElementById('connectionStatus');
+        
+        // Simular pérdida de conexión ocasional
+        if (Math.random() < 0.02) {
+            connectionElement.classList.add('disconnected');
+            connectionElement.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Desconectado';
+            config.bluetoothEnabled = false;
+        } else {
+            connectionElement.classList.remove('disconnected');
+            connectionElement.innerHTML = '<i class="fa-solid fa-wifi"></i> Conectado';
+            config.bluetoothEnabled = true;
+        }
+    }
+
+    // GPS mejorado para Santiago, Chile
     function getGPS() {
         const gpsStatus = document.getElementById('gpsStatus');
-        gpsStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación...';
-        // Simulación de geolocalización
+        gpsStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación en Santiago, Chile...';
+        
         setTimeout(() => {
-            // Coordenadas simuladas
-            const lat = "19.4326";
-            const lon = "-99.1332";
-            gpsStatus.innerHTML = `<i class="fa-solid fa-location-dot"></i> 
+            // Coordenadas de Santiago, Chile (zona central)
+            const locations = [
+                { lat: "-33.4489", lon: "-70.6693", area: "Centro de Santiago" },
+                { lat: "-33.4372", lon: "-70.6506", area: "Providencia" },
+                { lat: "-33.4569", lon: "-70.6483", area: "Ñuñoa" },
+                { lat: "-33.4734", lon: "-70.6410", area: "La Reina" },
+                { lat: "-33.4398", lon: "-70.6545", area: "Las Condes" }
+            ];
+            
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            
+            gpsStatus.innerHTML = `
+                <i class="fa-solid fa-location-dot"></i> 
                 <strong>Ubicación actual:</strong><br>
-                <span style="font-size:1.1em;">Lat: <b>${lat}</b> | Lon: <b>${lon}</b></span>
-                <br>
-                <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" style="color:#0af;text-decoration:underline;font-size:1em;">
-                    Ver en Google Maps
-                </a>`;
-        }, 1200);
+                <span style="font-size:1.1em;color:#0af;">${randomLocation.area}</span><br>
+                <span style="font-size:0.9em;">Lat: <b>${randomLocation.lat}</b> | Lon: <b>${randomLocation.lon}</b></span>
+                <br><br>
+                <a href="https://maps.google.com/?q=${randomLocation.lat},${randomLocation.lon}" target="_blank" style="color:#0af;text-decoration:underline;font-size:1em;">
+                    <i class="fa-solid fa-external-link-alt"></i> Ver en Google Maps
+                </a>
+            `;
+            
+            // Registrar ubicación en historial
+            addToHistory(`📍 Ubicación: ${randomLocation.area}`);
+        }, 2000);
     }
 
-    setInterval(updateVitals, 4000);
-    setInterval(updateClock, 1000);
-    updateVitals();
-    updateClock();
+    // Compartir ubicación con tutor
+    function shareLocation() {
+        sendAlert("📍 Ubicación compartida con el tutor");
+        addToHistory("📍 Ubicación compartida con tutor");
+        notifyTutor("📍 Ubicación compartida por el paciente");
+    }
+
+    // Monitoreo constante de ubicación
+    function enableLocationMonitoring() {
+        config.locationMonitoring = !config.locationMonitoring;
+        const button = event.target;
+        
+        if (config.locationMonitoring) {
+            button.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Monitoreo Activo';
+            button.style.background = 'linear-gradient(90deg, #28a745 60%, #20c997 100%)';
+            sendAlert("📡 Monitoreo de ubicación activado");
+        } else {
+            button.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Monitoreo Constante';
+            button.style.background = 'linear-gradient(90deg,#0af 60%,#0077ff 100%)';
+            sendAlert("📡 Monitoreo de ubicación desactivado");
+        }
+    }
+
+    // Funciones de configuración
+    function updateBpmThreshold() {
+        config.bpmThreshold = parseInt(document.getElementById('bpmThreshold').value);
+        sendAlert(`✅ Umbral BPM actualizado a ${config.bpmThreshold}`);
+    }
+
+    function toggleVibration() {
+        config.vibrationEnabled = !config.vibrationEnabled;
+        const button = document.getElementById('vibrationToggle');
+        button.textContent = config.vibrationEnabled ? 'Activada' : 'Desactivada';
+        button.classList.toggle('off', !config.vibrationEnabled);
+    }
+
+    function updateMedicTime() {
+        config.medicationTime1 = document.getElementById('medicTime').value;
+        document.getElementById('medicReminder1').textContent = config.medicationTime1;
+        sendAlert(`✅ Recordatorio matutino: ${config.medicationTime1}`);
+    }
+
+    function updateMedicTime2() {
+        config.medicationTime2 = document.getElementById('medicTime2').value;
+        document.getElementById('medicReminder2').textContent = config.medicationTime2;
+        sendAlert(`✅ Recordatorio nocturno: ${config.medicationTime2}`);
+    }
+
+    function toggleNotifications() {
+        const levels = ["Solo tutor", "Tutor + Médico", "Emergencia"];
+        const button = document.getElementById('notificationToggle');
+        const currentIndex = levels.indexOf(button.textContent);
+        const nextIndex = (currentIndex + 1) % levels.length;
+        button.textContent = levels[nextIndex];
+        config.notificationLevel = levels[nextIndex];
+    }
+
+    function updateVolume() {
+        config.volumeLevel = document.getElementById('volumeLevel').value;
+        sendAlert(`🔊 Volumen: ${config.volumeLevel}`);
+    }
+
+    function toggleBluetooth() {
+        config.bluetoothEnabled = !config.bluetoothEnabled;
+        const button = document.getElementById('bluetoothToggle');
+        button.textContent = config.bluetoothEnabled ? 'Conectado' : 'Desconectado';
+        button.classList.toggle('off', !config.bluetoothEnabled);
+        
+        if (!config.bluetoothEnabled) {
+            sendAlert("📱 Bluetooth desconectado");
+        } else {
+            sendAlert("📱 Bluetooth reconectado");
+        }
+    }
+
+    // Funciones de mensajería por voz
+    function recordVoiceMessage() {
+        const button = event.target;
+        if (!config.isRecording) {
+            config.isRecording = true;
+            button.innerHTML = '<i class="fa-solid fa-stop sound-wave"></i> Detener Grabación';
+            button.style.background = 'linear-gradient(90deg, #dc3545 60%, #c82333 100%)';
+            
+            // Simular grabación
+            setTimeout(() => {
+                config.isRecording = false;
+                button.innerHTML = '<i class="fa-solid fa-microphone"></i> Grabar Mensaje de Voz';
+                button.style.background = 'linear-gradient(90deg, #28a745 60%, #20c997 100%)';
+                sendAlert("🎤 Mensaje de voz grabado correctamente");
+                addToHistory("🎤 Mensaje de voz grabado");
+            }, 3000);
+        }
+    }
+
+    function playVoiceMessage() {
+        const button = event.target;
+        button.innerHTML = '<i class="fa-solid fa-pause sound-wave"></i> Reproduciendo...';
+        
+        setTimeout(() => {
+            button.innerHTML = '<i class="fa-solid fa-play"></i> Reproducir Mensaje Personal';
+        }, 3000);
+        
+        // Simular reproducción
+        playSound();
+        sendAlert("🔊 Reproduciendo mensaje personal");
+    }
+
+    function sendTextMessage() {
+        const messages = [
+            "Estoy bien, gracias por preguntar",
+            "Necesito ayuda con algo",
+            "Todo está en orden aquí",
+            "Recordar cita médica",
+            "Medicación tomada correctamente"
+        ];
+        
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        sendAlert(`📨 Mensaje enviado: "${randomMessage}"`);
+        addToHistory(`📨 Mensaje enviado al tutor`);
+        notifyTutor(`Mensaje del paciente: "${randomMessage}"`);
+    }
+
+    function emergencyCall() {
+        sendAlert("📞 Llamando al tutor...");
+        addToHistory("📞 Llamada de emergencia iniciada");
+        notifyTutor("📞 Llamada de emergencia del paciente");
+        
+        setTimeout(() => {
+            sendAlert("☎️ Conexión establecida con el tutor");
+        }, 2000);
+    }
+
+    // Función SOS mejorada
+    function sosEmergency() {
+        const sosBtn = document.getElementById('sosBtn');
+        sosBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO SOS...';
+        sosBtn.style.background = 'linear-gradient(90deg, #dc3545 60%, #c82333 100%)';
+        
+        // Obtener ubicación automáticamente
+        getGPS();
+        
+        setTimeout(() => {
+            sosBtn.innerHTML = '<i class="fa-solid fa-check"></i> SOS ENVIADO';
+            sendAlert("🚨 SOS enviado al tutor y servicios médicos");
+            addToHistory("🚨 Botón SOS activado");
+            notifyTutor("🚨 EMERGENCIA: Botón SOS activado");
+            
+            // Simular respuesta del tutor
+            setTimeout(() => {
+                addToHistory("📞 Tutor notificado - En camino");
+                addToHistory("🚑 Servicios médicos contactados");
+                sosBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> EMERGENCIA SOS';
+                sosBtn.style.background = 'linear-gradient(90deg, #ff4d4d 60%, #ff0000 100%)';
+            }, 5000);
+        }, 2000);
+    }
+
+    // Sincronización con la nube
+    function syncToCloud() {
+        console.log("Sincronizando datos con la nube...");
+        addToHistory("☁️ Datos sincronizados con la nube");
+        
+        // Simular envío de datos vitales al tutor
+        setTimeout(() => {
+            notifyTutor("📊 Datos vitales actualizados en tiempo real");
+        }, 1000);
+    }
+
+    // Funciones auxiliares
+    function playSound() {
+        // Simulación de sonido
+        console.log("🔊 Reproduciendo sonido...");
+    }
+
+    function addToHistory(entry) {
+        const now = new Date();
+        const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        console.log(`Historial [${time}]: ${entry}`);
+    }
+
+    // Inicialización
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('sosBtn').onclick = sosEmergency;
+        
+        // Actualizar elementos según configuración
+        document.getElementById('medicReminder1').textContent = config.medicationTime1;
+        document.getElementById('medicReminder2').textContent = config.medicationTime2;
+        
+        // Iniciar actualizaciones
+        updateVitals();
+        updateClock();
+        
+        // Mensaje de bienvenida
+        setTimeout(() => {
+            sendAlert("💖 VitalCare Watch iniciado correctamente");
+            addToHistory("💖 Sistema VitalCare iniciado");
+        }, 1000);
+    });
+
+    // Intervalos de actualización
+    setInterval(updateVitals, 5000);  // Cada 5 segundos
+    setInterval(updateClock, 1000);   // Cada segundo
+
+    // Efectos de vibración simulados
+    const vibrateCSS = `
+        @keyframes vibrate {
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = vibrateCSS;
+    document.head.appendChild(style);
 </script>
 
 </body>
