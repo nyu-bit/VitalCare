@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>VitalCare Watch - Reloj Centralizado</title>
+    <!-- Font Awesome para iconos bonitos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        .watch {
+            width: 400px;
+            height: 400px;
+            background: 
+                linear-gradient(rgba(35,39,47,0.7), rgba(0,0,0,0.8)),
+                url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=facearea&w=400&h=400&facepad=2') center center/cover no-repeat;
+            border-radius: 50%;
+            border: 6px solid #0af;
+            box-shadow: 0 0 30px #0af, 0 0 0 8px #222 inset;
+            padding: 20px;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            overflow: hidden;
+            position: relative;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1em;
+            margin-bottom: 8px;
+        }
+        .topbar .fa-battery-three-quarters {
+            color: #0af;
+            margin-right: 4px;
+        }
+        .title {
+            font-size: 1.3em;
+            margin: 8px 0 12px 0;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 8px #000;
+        }
+        .screen {
+            display: none;
+            text-align: center;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        .value {
+            font-size: 1.2em;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-shadow: 0 2px 8px #000;
+        }
+        .value i {
+            font-size: 1.2em;
+            color: #0af;
+        }
+        .sos-btn {
+            background: linear-gradient(90deg, #ff4d4d 60%, #ff0000 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            margin: 18px auto 0 auto;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 90%;
+            font-weight: bold;
+            box-shadow: 0 0 10px #ff4d4d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.1s;
+            text-shadow: 0 2px 8px #000;
+        }
+        .sos-btn:active {
+            transform: scale(0.97);
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+            gap: 4px;
+        }
+        .menu button {
+            background-color: #0af;
+            border: none;
+            color: white;
+            padding: 7px 0;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 0.85em;
+            width: 78px;
+            margin: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background 0.2s;
+            text-shadow: 0 2px 8px #000;
+        }
+        .menu button:hover, .menu button:focus {
+            background-color: #08c;
+        }
+        /* Mejoras para accesibilidad */
+        .menu button, .sos-btn {
+            outline: none;
+        }
+        /* Scrollbar más visible */
+        .screen {
+            scrollbar-width: thin;
+            scrollbar-color: #0af #222;
+        }
+        .screen::-webkit-scrollbar {
+            width: 6px;
+            background: #222;
+        }
+        .screen::-webkit-scrollbar-thumb {
+            background: #0af;
+            border-radius: 6px;
+        }
+        /* Mensajes y recordatorios */
+        .msg, .reminder, .history {
+            background: rgba(24,28,34,0.85);
+            border-radius: 8px;
+            margin: 8px 0;
+            padding: 8px 12px;
+            font-size: 1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: flex-start;
+            text-shadow: 0 2px 8px #000;
+        }
+        .msg i, .reminder i, .history i {
+            color: #0af;
+            font-size: 1.1em;
+        }
+        .history.alert i {
+            color: #ff4d4d;
+        }
+        .history.fall i {
+            color: #ffb300;
+        }
+        /* GPS extra */
+        .gps-btn {
+            background: linear-gradient(90deg,#0af 60%,#0077ff 100%);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            margin: 18px auto 0 auto;
+            font-size: 1.1em;
+            cursor: pointer;
+            width: 90%;
+            font-weight: bold;
+            box-shadow: 0 0 10px #0af;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.1s;
+            text-shadow: 0 2px 8px #000;
+        }
+        .gps-btn:active {
+            transform: scale(0.97);
+        }
+    </style>
+</head>
+<body>
+
+<div class="watch">
+    <div class="topbar">
+        <div id="clock"><i class="fa-regular fa-clock"></i> --:--</div>
+        <div><i class="fa-solid fa-battery-three-quarters"></i> 88%</div>
+    </div>
+
+    <!-- Pantalla principal -->
+    <div id="screen1" class="screen active">
+        <div class="title"><i class="fa-solid fa-heart-pulse"></i> VitalCare Watch</div>
+        <div class="value"><i class="fa-solid fa-heart"></i> BPM: <span id="bpm">--</span></div>
+        <div class="value"><i class="fa-solid fa-lungs"></i> O₂: <span id="oxigeno">--</span>%</div>
+        <div class="value"><i class="fa-solid fa-shoe-prints"></i> Pasos: <span id="pasos">--</span></div>
+        <button class="sos-btn" id="sosBtn"><i class="fa-solid fa-triangle-exclamation"></i> BOTÓN SOS</button>
+    </div>
+
+    <!-- Historial -->
+    <div id="screen2" class="screen">
+        <div class="title"><i class="fa-solid fa-chart-line"></i> Historial</div>
+        <div class="history"><i class="fa-solid fa-clock"></i> 12:00 - 76 BPM / 98%</div>
+        <div class="history alert"><i class="fa-solid fa-heart-circle-exclamation"></i> 13:05 - 125 BPM / 96% <span style="color:#ff4d4d;">&#9888;</span></div>
+        <div class="history fall"><i class="fa-solid fa-person-falling"></i> 14:35 - Caída detectada</div>
+        <div class="history"><i class="fa-solid fa-clock"></i> 15:00 - 82 BPM / 97%</div>
+    </div>
+
+    <!-- Configuración -->
+    <div id="screen3" class="screen">
+        <div class="title"><i class="fa-solid fa-gear"></i> Configuración</div>
+        <div class="msg"><i class="fa-solid fa-heart-circle-exclamation"></i> Umbral BPM: <strong>120</strong></div>
+        <div class="msg"><i class="fa-solid fa-vibrate"></i> Vibración: <strong>Activada</strong></div>
+        <div class="msg"><i class="fa-solid fa-user-doctor"></i> Notificaciones: <strong>Tutor + Médico</strong></div>
+    </div>
+
+    <!-- Mensajes -->
+    <div id="screen4" class="screen">
+        <div class="title"><i class="fa-solid fa-envelope"></i> Mensajes</div>
+        <div class="msg"><i class="fa-solid fa-bell"></i> “No olvides tu medicación” <span style="margin-left:auto;font-size:0.9em;color:#aaa;">12:30</span></div>
+        <div class="msg"><i class="fa-solid fa-user"></i> “Voy en camino” <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
+    </div>
+
+    <!-- Recordatorios -->
+    <div id="screen5" class="screen">
+        <div class="title"><i class="fa-solid fa-bell"></i> Recordatorios</div>
+        <div class="reminder"><i class="fa-solid fa-capsules"></i> Pastilla diaria <span style="margin-left:auto;font-size:0.9em;color:#aaa;">13:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-bed"></i> Hora de dormir <span style="margin-left:auto;font-size:0.9em;color:#aaa;">22:00</span></div>
+    </div>
+
+    <!-- GPS -->
+    <div id="screen6" class="screen">
+        <div class="title"><i class="fa-solid fa-location-dot"></i> Ubicación GPS</div>
+        <div class="msg" id="gpsStatus">
+            <i class="fa-solid fa-location-crosshairs"></i> Presiona el botón para obtener ubicación.
+        </div>
+        <button class="gps-btn" onclick="getGPS()">
+            <i class="fa-solid fa-location-dot"></i> Obtener ubicación
+        </button>
+    </div>
+
+    <!-- Menú inferior -->
+    <div class="menu">
+        <button onclick="showScreen(1)"><i class="fa-solid fa-house"></i> Inicio</button>
+        <button onclick="showScreen(2)"><i class="fa-solid fa-chart-line"></i> Historial</button>
+        <button onclick="showScreen(3)"><i class="fa-solid fa-gear"></i> Config</button>
+        <button onclick="showScreen(4)"><i class="fa-solid fa-envelope"></i> Mensajes</button>
+        <button onclick="showScreen(5)"><i class="fa-solid fa-bell"></i> Recordar</button>
+        <button onclick="showScreen(6)"><i class="fa-solid fa-location-dot"></i> GPS</button>
+    </div>
+</div>
+
+<script>
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen' + id).classList.add('active');
+    }
+
+    function updateVitals() {
+        const bpm = Math.floor(Math.random() * 40) + 70;
+        const ox = Math.floor(Math.random() * 5) + 95;
+        const pasos = Math.floor(Math.random() * 10000);
+        document.getElementById('bpm').textContent = bpm;
+        document.getElementById('oxigeno').textContent = ox;
+        document.getElementById('pasos').textContent = pasos;
+    }
+
+    function updateClock() {
+        const now = new Date();
+        const h = now.getHours().toString().padStart(2, '0');
+        const m = now.getMinutes().toString().padStart(2, '0');
+        document.getElementById('clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${h}:${m}`;
+
+        // Alerta de recordatorio de medicación a las 13:00
+        if (h === "13" && m === "00" && !window.medicAlerted) {
+            alert("¡Hora de tomar tu medicación!");
+            window.medicAlerted = true;
+        }
+        // Reinicia alerta al cambiar de minuto
+        if (m !== "00") window.medicAlerted = false;
+    }
+
+    // Simula aviso al tutor al presionar SOS
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('sosBtn').onclick = function() {
+            alert('¡SOS enviado!\nEl tutor ha sido notificado.');
+        }
+    });
+
+    // GPS simulado
+    function getGPS() {
+        const gpsStatus = document.getElementById('gpsStatus');
+        gpsStatus.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Obteniendo ubicación...';
+        // Simulación de geolocalización
+        setTimeout(() => {
+            // Coordenadas simuladas
+            const lat = "19.4326";
+            const lon = "-99.1332";
+            gpsStatus.innerHTML = `<i class="fa-solid fa-location-dot"></i> 
+                <strong>Ubicación actual:</strong><br>
+                <span style="font-size:1.1em;">Lat: <b>${lat}</b> | Lon: <b>${lon}</b></span>
+                <br>
+                <a href="https://maps.google.com/?q=${lat},${lon}" target="_blank" style="color:#0af;text-decoration:underline;font-size:1em;">
+                    Ver en Google Maps
+                </a>`;
+        }, 1200);
+    }
+
+    setInterval(updateVitals, 4000);
+    setInterval(updateClock, 1000);
+    updateVitals();
+    updateClock();
+</script>
+
+</body>
+</html>
