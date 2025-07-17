@@ -2,8 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>VitalCare Watch - Reloj Centralizado</title>
+    <title>VitalCare Watch - Reloj Inteligente para Adultos Mayores</title>
     <!-- Font Awesome para iconos bonitos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -35,7 +34,6 @@
             box-sizing: border-box;
             overflow: hidden;
             position: relative;
-            cursor: pointer;
         }
         .topbar {
             display: flex;
@@ -105,6 +103,39 @@
         }
         .sos-btn:active {
             transform: scale(0.97);
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+            gap: 4px;
+        }
+        .menu button {
+            background-color: #0af;
+            border: none;
+            color: white;
+            padding: 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            width: 85px;
+            margin: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-shadow: 0 2px 8px #000;
+            font-weight: bold;
+        }
+        .menu button:hover, .menu button:focus {
+            background-color: #08c;
+            transform: scale(1.05);
+        }
+        /* Mejoras para accesibilidad */
+        .menu button, .sos-btn {
+            outline: none;
         }
         /* Scrollbar más visible */
         .screen {
@@ -252,6 +283,11 @@
             51%, 100% { opacity: 0.5; }
         }
         
+        /* Modo noche automático */
+        .night-mode {
+            background: linear-gradient(rgba(10,10,10,0.9), rgba(0,0,0,0.95));
+        }
+        
         /* Efectos de sonido visual */
         .sound-wave {
             animation: soundWave 1s infinite;
@@ -262,27 +298,31 @@
             50% { transform: scaleY(1.3); }
         }
         
-        /* Navegación hint */
-        .navigation-hint {
+        /* Conectividad */
+        .connection-status {
             position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 10px;
+            right: 10px;
             font-size: 0.8em;
-            color: #666;
-            opacity: 0.7;
+            color: #0af;
+        }
+        
+        .connection-status.disconnected {
+            color: #ff4d4d;
         }
     </style>
 </head>
 <body>
 
 <div class="watch">
+    <div class="connection-status" id="connectionStatus">
+        <i class="fa-solid fa-wifi"></i> Conectado
+    </div>
+    
     <div class="topbar">
         <div id="clock"><i class="fa-regular fa-clock"></i> --:--</div>
         <div><i class="fa-solid fa-battery-three-quarters"></i> <span id="battery">88%</span></div>
     </div>
-    
-    <div class="navigation-hint">👆 Toca para navegar</div>
 
     <!-- Pantalla principal -->
     <div id="screen1" class="screen active">
@@ -304,6 +344,7 @@
         <div class="history"><i class="fa-solid fa-clock"></i> 15:00 - 82 BPM / 97% O₂</div>
         <div class="history"><i class="fa-solid fa-thermometer-half"></i> 15:30 - Temp: 36.5°C</div>
         <div class="history alert"><i class="fa-solid fa-stethoscope"></i> 16:00 - P.A.: 145/90 <span style="color:#ff4d4d;">⚠️</span></div>
+        <div class="history"><i class="fa-solid fa-cloud-upload-alt"></i> 16:05 - Datos sincronizados con la nube</div>
     </div>
 
     <!-- Configuración -->
@@ -341,6 +382,10 @@
                 <option value="alto">Alto</option>
             </select>
         </div>
+        <div class="config-item">
+            <div><i class="fa-solid fa-bluetooth"></i> Bluetooth</div>
+            <button class="config-toggle" id="bluetoothToggle" onclick="toggleBluetooth()">Conectado</button>
+        </div>
     </div>
 
     <!-- Mensajes -->
@@ -352,6 +397,9 @@
         <div class="msg"><i class="fa-solid fa-user-doctor"></i> "Recordatorio: Consulta médica mañana a las 10:00" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Dr. García</span></div>
         <button class="voice-btn" onclick="recordVoiceMessage()">
             <i class="fa-solid fa-microphone"></i> Grabar Mensaje de Voz
+        </button>
+        <button class="voice-btn" onclick="playVoiceMessage()">
+            <i class="fa-solid fa-play"></i> Reproducir Mensaje Personal
         </button>
         <button class="voice-btn" onclick="sendTextMessage()">
             <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje al Tutor
@@ -371,6 +419,7 @@
         <div class="reminder"><i class="fa-solid fa-utensils"></i> Cena <span style="margin-left:auto;font-size:0.9em;color:#aaa;">19:00</span></div>
         <div class="reminder"><i class="fa-solid fa-bed"></i> Hora de dormir <span style="margin-left:auto;font-size:0.9em;color:#aaa;">22:00</span></div>
         <div class="reminder"><i class="fa-solid fa-dumbbell"></i> Ejercicios <span style="margin-left:auto;font-size:0.9em;color:#aaa;">16:00</span></div>
+        <div class="reminder"><i class="fa-solid fa-user-doctor"></i> Consulta médica <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Mañana 10:00</span></div>
     </div>
 
     <!-- GPS -->
@@ -385,6 +434,19 @@
         <button class="gps-btn" onclick="shareLocation()">
             <i class="fa-solid fa-share-from-square"></i> Compartir con Tutor
         </button>
+        <button class="gps-btn" onclick="enableLocationMonitoring()">
+            <i class="fa-solid fa-satellite-dish"></i> Monitoreo Constante
+        </button>
+    </div>
+
+    <!-- Menú inferior -->
+    <div class="menu">
+        <button onclick="showScreen(1)"><i class="fa-solid fa-house"></i> Inicio</button>
+        <button onclick="showScreen(2)"><i class="fa-solid fa-chart-line"></i> Historial</button>
+        <button onclick="showScreen(3)"><i class="fa-solid fa-gear"></i> Config</button>
+        <button onclick="showScreen(4)"><i class="fa-solid fa-envelope"></i> Mensajes</button>
+        <button onclick="showScreen(5)"><i class="fa-solid fa-bell"></i> Recordar</button>
+        <button onclick="showScreen(6)"><i class="fa-solid fa-location-dot"></i> GPS</button>
     </div>
 </div>
 
@@ -397,33 +459,26 @@
         medicationTime2: "20:00",
         notificationLevel: "tutor_medico",
         volumeLevel: "medio",
+        bluetoothEnabled: true,
+        locationMonitoring: false,
         isRecording: false,
-        lastMedicationAlert: null
+        lastMedicationAlert: null,
+        cloudSyncEnabled: true
     };
 
-    // Navegación clickeable
-    const screens = document.querySelectorAll('.screen');
-    let currentIndex = 0;
-
-    document.querySelector('.watch').addEventListener('click', (e) => {
-        // Prevenir navegación si se hace click en un botón
-        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
-            e.stopPropagation();
-            return;
-        }
+    // Función principal para cambiar pantallas
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen' + id).classList.add('active');
         
-        screens[currentIndex].classList.remove('active');
-        currentIndex = (currentIndex + 1) % screens.length;
-        screens[currentIndex].classList.add('active');
-        
-        // Efecto de vibración simulada
+        // Agregar efecto de vibración simulada
         if (config.vibrationEnabled) {
             document.querySelector('.watch').style.animation = 'vibrate 0.1s';
             setTimeout(() => {
                 document.querySelector('.watch').style.animation = '';
             }, 100);
         }
-    });
+    }
 
     // Actualizar signos vitales con alertas inteligentes
     function updateVitals() {
@@ -443,6 +498,11 @@
         
         // Alertas inteligentes
         checkVitalAlerts(bpm, ox, systolic, diastolic, temp);
+        
+        // Simular sincronización con la nube
+        if (config.cloudSyncEnabled && Math.random() < 0.1) {
+            syncToCloud();
+        }
     }
 
     // Sistema de alertas inteligentes
@@ -461,21 +521,25 @@
         if (bpm > config.bpmThreshold || bpm < 50) {
             bpmElement.classList.add('vital-alert');
             sendAlert(`⚠️ Frecuencia cardíaca anormal: ${bpm} BPM`);
+            notifyTutor(`Alerta: Frecuencia cardíaca ${bpm} BPM`);
         }
         
         if (ox < 95) {
             oxElement.classList.add('vital-alert');
             sendAlert(`⚠️ Oxígeno bajo: ${ox}%`);
+            notifyTutor(`Alerta: Oxígeno bajo ${ox}%`);
         }
         
         if (systolic > 140 || diastolic > 90) {
             presionElement.classList.add('vital-alert');
             sendAlert(`⚠️ Presión arterial alta: ${systolic}/${diastolic}`);
+            notifyTutor(`Alerta: Presión arterial ${systolic}/${diastolic}`);
         }
         
         if (temp > 37.5 || temp < 35.5) {
             tempElement.classList.add('vital-alert');
             sendAlert(`⚠️ Temperatura anormal: ${temp}°C`);
+            notifyTutor(`Alerta: Temperatura ${temp}°C`);
         }
     }
 
@@ -496,6 +560,13 @@
         }, 5000);
     }
 
+    // Notificar al tutor
+    function notifyTutor(message) {
+        console.log("Notificando al tutor:", message);
+        // Simular envío de notificación al tutor
+        addToHistory(`📱 Tutor notificado: ${message}`);
+    }
+
     // Actualizar reloj con verificación de recordatorios
     function updateClock() {
         const now = new Date();
@@ -508,6 +579,9 @@
         
         // Simular descarga de batería
         updateBattery();
+        
+        // Verificar conectividad
+        updateConnectionStatus();
     }
 
     // Sistema de recordatorios de medicación
@@ -557,7 +631,24 @@
             
             if (currentBattery <= 20) {
                 sendAlert(`🔋 Batería baja: ${currentBattery}%`);
+                notifyTutor(`Batería baja: ${currentBattery}%`);
             }
+        }
+    }
+
+    // Actualizar estado de conectividad
+    function updateConnectionStatus() {
+        const connectionElement = document.getElementById('connectionStatus');
+        
+        // Simular pérdida de conexión ocasional
+        if (Math.random() < 0.02) {
+            connectionElement.classList.add('disconnected');
+            connectionElement.innerHTML = '<i class="fa-solid fa-wifi-slash"></i> Desconectado';
+            config.bluetoothEnabled = false;
+        } else {
+            connectionElement.classList.remove('disconnected');
+            connectionElement.innerHTML = '<i class="fa-solid fa-wifi"></i> Conectado';
+            config.bluetoothEnabled = true;
         }
     }
 
@@ -598,6 +689,23 @@
     function shareLocation() {
         sendAlert("📍 Ubicación compartida con el tutor");
         addToHistory("📍 Ubicación compartida con tutor");
+        notifyTutor("📍 Ubicación compartida por el paciente");
+    }
+
+    // Monitoreo constante de ubicación
+    function enableLocationMonitoring() {
+        config.locationMonitoring = !config.locationMonitoring;
+        const button = event.target;
+        
+        if (config.locationMonitoring) {
+            button.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Monitoreo Activo';
+            button.style.background = 'linear-gradient(90deg, #28a745 60%, #20c997 100%)';
+            sendAlert("📡 Monitoreo de ubicación activado");
+        } else {
+            button.innerHTML = '<i class="fa-solid fa-satellite-dish"></i> Monitoreo Constante';
+            button.style.background = 'linear-gradient(90deg,#0af 60%,#0077ff 100%)';
+            sendAlert("📡 Monitoreo de ubicación desactivado");
+        }
     }
 
     // Funciones de configuración
@@ -639,6 +747,19 @@
         sendAlert(`🔊 Volumen: ${config.volumeLevel}`);
     }
 
+    function toggleBluetooth() {
+        config.bluetoothEnabled = !config.bluetoothEnabled;
+        const button = document.getElementById('bluetoothToggle');
+        button.textContent = config.bluetoothEnabled ? 'Conectado' : 'Desconectado';
+        button.classList.toggle('off', !config.bluetoothEnabled);
+        
+        if (!config.bluetoothEnabled) {
+            sendAlert("📱 Bluetooth desconectado");
+        } else {
+            sendAlert("📱 Bluetooth reconectado");
+        }
+    }
+
     // Funciones de mensajería por voz
     function recordVoiceMessage() {
         const button = event.target;
@@ -653,8 +774,22 @@
                 button.innerHTML = '<i class="fa-solid fa-microphone"></i> Grabar Mensaje de Voz';
                 button.style.background = 'linear-gradient(90deg, #28a745 60%, #20c997 100%)';
                 sendAlert("🎤 Mensaje de voz grabado correctamente");
+                addToHistory("🎤 Mensaje de voz grabado");
             }, 3000);
         }
+    }
+
+    function playVoiceMessage() {
+        const button = event.target;
+        button.innerHTML = '<i class="fa-solid fa-pause sound-wave"></i> Reproduciendo...';
+        
+        setTimeout(() => {
+            button.innerHTML = '<i class="fa-solid fa-play"></i> Reproducir Mensaje Personal';
+        }, 3000);
+        
+        // Simular reproducción
+        playSound();
+        sendAlert("🔊 Reproduciendo mensaje personal");
     }
 
     function sendTextMessage() {
@@ -668,10 +803,15 @@
         
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         sendAlert(`📨 Mensaje enviado: "${randomMessage}"`);
+        addToHistory(`📨 Mensaje enviado al tutor`);
+        notifyTutor(`Mensaje del paciente: "${randomMessage}"`);
     }
 
     function emergencyCall() {
         sendAlert("📞 Llamando al tutor...");
+        addToHistory("📞 Llamada de emergencia iniciada");
+        notifyTutor("📞 Llamada de emergencia del paciente");
+        
         setTimeout(() => {
             sendAlert("☎️ Conexión establecida con el tutor");
         }, 2000);
@@ -683,18 +823,34 @@
         sosBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ENVIANDO SOS...';
         sosBtn.style.background = 'linear-gradient(90deg, #dc3545 60%, #c82333 100%)';
         
+        // Obtener ubicación automáticamente
+        getGPS();
+        
         setTimeout(() => {
             sosBtn.innerHTML = '<i class="fa-solid fa-check"></i> SOS ENVIADO';
             sendAlert("🚨 SOS enviado al tutor y servicios médicos");
             addToHistory("🚨 Botón SOS activado");
+            notifyTutor("🚨 EMERGENCIA: Botón SOS activado");
             
             // Simular respuesta del tutor
             setTimeout(() => {
                 addToHistory("📞 Tutor notificado - En camino");
+                addToHistory("🚑 Servicios médicos contactados");
                 sosBtn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> EMERGENCIA SOS';
                 sosBtn.style.background = 'linear-gradient(90deg, #ff4d4d 60%, #ff0000 100%)';
             }, 5000);
         }, 2000);
+    }
+
+    // Sincronización con la nube
+    function syncToCloud() {
+        console.log("Sincronizando datos con la nube...");
+        addToHistory("☁️ Datos sincronizados con la nube");
+        
+        // Simular envío de datos vitales al tutor
+        setTimeout(() => {
+            notifyTutor("📊 Datos vitales actualizados en tiempo real");
+        }, 1000);
     }
 
     // Funciones auxiliares
@@ -724,6 +880,7 @@
         // Mensaje de bienvenida
         setTimeout(() => {
             sendAlert("💖 VitalCare Watch iniciado correctamente");
+            addToHistory("💖 Sistema VitalCare iniciado");
         }, 1000);
     });
 

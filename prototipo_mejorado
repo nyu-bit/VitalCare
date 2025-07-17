@@ -2,7 +2,6 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>VitalCare Watch - Reloj Centralizado</title>
     <!-- Font Awesome para iconos bonitos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -105,6 +104,39 @@
         }
         .sos-btn:active {
             transform: scale(0.97);
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 8px;
+            gap: 4px;
+        }
+        .menu button {
+            background-color: #0af;
+            border: none;
+            color: white;
+            padding: 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            width: 85px;
+            margin: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+            text-shadow: 0 2px 8px #000;
+            font-weight: bold;
+        }
+        .menu button:hover, .menu button:focus {
+            background-color: #08c;
+            transform: scale(1.05);
+        }
+        /* Mejoras para accesibilidad */
+        .menu button, .sos-btn {
+            outline: none;
         }
         /* Scrollbar más visible */
         .screen {
@@ -252,6 +284,11 @@
             51%, 100% { opacity: 0.5; }
         }
         
+        /* Modo noche automático */
+        .night-mode {
+            background: linear-gradient(rgba(10,10,10,0.9), rgba(0,0,0,0.95));
+        }
+        
         /* Efectos de sonido visual */
         .sound-wave {
             animation: soundWave 1s infinite;
@@ -260,17 +297,6 @@
         @keyframes soundWave {
             0%, 100% { transform: scaleY(1); }
             50% { transform: scaleY(1.3); }
-        }
-        
-        /* Navegación hint */
-        .navigation-hint {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.8em;
-            color: #666;
-            opacity: 0.7;
         }
     </style>
 </head>
@@ -281,8 +307,6 @@
         <div id="clock"><i class="fa-regular fa-clock"></i> --:--</div>
         <div><i class="fa-solid fa-battery-three-quarters"></i> <span id="battery">88%</span></div>
     </div>
-    
-    <div class="navigation-hint">👆 Toca para navegar</div>
 
     <!-- Pantalla principal -->
     <div id="screen1" class="screen active">
@@ -386,6 +410,16 @@
             <i class="fa-solid fa-share-from-square"></i> Compartir con Tutor
         </button>
     </div>
+
+    <!-- Menú inferior -->
+    <div class="menu">
+        <button onclick="showScreen(1)"><i class="fa-solid fa-house"></i> Inicio</button>
+        <button onclick="showScreen(2)"><i class="fa-solid fa-chart-line"></i> Historial</button>
+        <button onclick="showScreen(3)"><i class="fa-solid fa-gear"></i> Config</button>
+        <button onclick="showScreen(4)"><i class="fa-solid fa-envelope"></i> Mensajes</button>
+        <button onclick="showScreen(5)"><i class="fa-solid fa-bell"></i> Recordar</button>
+        <button onclick="showScreen(6)"><i class="fa-solid fa-location-dot"></i> GPS</button>
+    </div>
 </div>
 
 <script>
@@ -401,29 +435,19 @@
         lastMedicationAlert: null
     };
 
-    // Navegación clickeable
-    const screens = document.querySelectorAll('.screen');
-    let currentIndex = 0;
-
-    document.querySelector('.watch').addEventListener('click', (e) => {
-        // Prevenir navegación si se hace click en un botón
-        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
-            e.stopPropagation();
-            return;
-        }
+    // Función principal para cambiar pantallas
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen' + id).classList.add('active');
         
-        screens[currentIndex].classList.remove('active');
-        currentIndex = (currentIndex + 1) % screens.length;
-        screens[currentIndex].classList.add('active');
-        
-        // Efecto de vibración simulada
+        // Agregar efecto de vibración simulada
         if (config.vibrationEnabled) {
             document.querySelector('.watch').style.animation = 'vibrate 0.1s';
             setTimeout(() => {
                 document.querySelector('.watch').style.animation = '';
             }, 100);
         }
-    });
+    }
 
     // Actualizar signos vitales con alertas inteligentes
     function updateVitals() {

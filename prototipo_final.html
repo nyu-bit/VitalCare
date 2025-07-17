@@ -295,70 +295,29 @@
         <button class="sos-btn" id="sosBtn"><i class="fa-solid fa-triangle-exclamation"></i> EMERGENCIA SOS</button>
     </div>
 
-    <!-- Historial -->
+    <!-- Pantalla 2: Solo Hora -->
     <div id="screen2" class="screen">
-        <div class="title"><i class="fa-solid fa-chart-line"></i> Historial</div>
-        <div class="history"><i class="fa-solid fa-clock"></i> 12:00 - 76 BPM / 98% O₂</div>
-        <div class="history alert"><i class="fa-solid fa-heart-circle-exclamation"></i> 13:05 - 125 BPM / 96% O₂ <span style="color:#ff4d4d;">⚠️</span></div>
-        <div class="history fall"><i class="fa-solid fa-person-falling"></i> 14:35 - Caída detectada</div>
-        <div class="history"><i class="fa-solid fa-clock"></i> 15:00 - 82 BPM / 97% O₂</div>
-        <div class="history"><i class="fa-solid fa-thermometer-half"></i> 15:30 - Temp: 36.5°C</div>
-        <div class="history alert"><i class="fa-solid fa-stethoscope"></i> 16:00 - P.A.: 145/90 <span style="color:#ff4d4d;">⚠️</span></div>
+        <div class="screen-icon" style="font-size: 60px; margin-bottom: 20px;">🕙</div>
+        <div class="time-display" style="font-size: 3em; color: #0af; margin-bottom: 15px;" id="clockDisplay2">--:--</div>
+        <div class="date-display" style="font-size: 1.5em; color: #ccc;" id="dateDisplay2">--</div>
     </div>
 
-    <!-- Configuración -->
+    <!-- Pantalla 3: Solo Presión Cardíaca -->
     <div id="screen3" class="screen">
-        <div class="title"><i class="fa-solid fa-gear"></i> Configuración</div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-heart-circle-exclamation"></i> Umbral BPM</div>
-            <select id="bpmThreshold" class="config-toggle" onchange="updateBpmThreshold()">
-                <option value="100">100</option>
-                <option value="120" selected>120</option>
-                <option value="140">140</option>
-            </select>
-        </div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-vibrate"></i> Vibración</div>
-            <button class="config-toggle" id="vibrationToggle" onclick="toggleVibration()">Activada</button>
-        </div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-capsules"></i> Recordatorio Medicación</div>
-            <input type="time" id="medicTime" class="config-toggle" value="08:00" onchange="updateMedicTime()">
-        </div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-capsules"></i> Recordatorio Medicación 2</div>
-            <input type="time" id="medicTime2" class="config-toggle" value="20:00" onchange="updateMedicTime2()">
-        </div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-user-doctor"></i> Notificaciones</div>
-            <button class="config-toggle" id="notificationToggle" onclick="toggleNotifications()">Tutor + Médico</button>
-        </div>
-        <div class="config-item">
-            <div><i class="fa-solid fa-volume-high"></i> Volumen</div>
-            <select id="volumeLevel" class="config-toggle" onchange="updateVolume()">
-                <option value="bajo">Bajo</option>
-                <option value="medio" selected>Medio</option>
-                <option value="alto">Alto</option>
-            </select>
-        </div>
+        <div class="screen-icon" style="font-size: 60px; margin-bottom: 20px;">❤️</div>
+        <div class="title" style="font-size: 1.5em; margin-bottom: 20px;">PRESIÓN CARDÍACA</div>
+        <div class="vital-value" style="font-size: 3em; color: #0af; margin: 20px 0;" id="heartRateDisplay">-- BPM</div>
+        <div style="font-size: 1.2em; color: #ccc;">Frecuencia Cardíaca</div>
     </div>
 
-    <!-- Mensajes -->
+    <!-- Pantalla 4: Solo Llamar -->
     <div id="screen4" class="screen">
-        <div class="title"><i class="fa-solid fa-envelope"></i> Mensajes</div>
-        <div class="msg"><i class="fa-solid fa-bell"></i> "No olvides tu medicación matutina" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">08:30</span></div>
-        <div class="msg"><i class="fa-solid fa-user"></i> "Voy en camino, estaré ahí en 10 minutos" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
-        <div class="msg"><i class="fa-solid fa-microphone"></i> "Mensaje de voz del tutor" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Tutor</span></div>
-        <div class="msg"><i class="fa-solid fa-user-doctor"></i> "Recordatorio: Consulta médica mañana a las 10:00" <span style="margin-left:auto;font-size:0.9em;color:#aaa;">Dr. García</span></div>
-        <button class="voice-btn" onclick="recordVoiceMessage()">
-            <i class="fa-solid fa-microphone"></i> Grabar Mensaje de Voz
+        <div class="screen-icon" style="font-size: 60px; margin-bottom: 20px;">📞</div>
+        <div class="title" style="font-size: 1.5em; margin-bottom: 30px;">LLAMAR</div>
+        <button class="voice-btn" onclick="emergencyCall()" style="font-size: 1.3em; padding: 20px; margin: 10px auto;">
+            <i class="fa-solid fa-phone"></i> LLAMAR AL TUTOR
         </button>
-        <button class="voice-btn" onclick="sendTextMessage()">
-            <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje al Tutor
-        </button>
-        <button class="voice-btn" onclick="emergencyCall()">
-            <i class="fa-solid fa-phone"></i> Llamar al Tutor
-        </button>
+        <div style="font-size: 1em; color: #ccc; margin-top: 20px;">Presiona para llamar</div>
     </div>
 
     <!-- Recordatorios -->
@@ -434,12 +393,15 @@
         const pasos = Math.floor(Math.random() * 15000) + 2000;
         const temp = (Math.random() * 2 + 36).toFixed(1);
         
-        // Actualizar valores en pantalla
+        // Actualizar valores en pantalla principal
         document.getElementById('bpm').textContent = bpm;
         document.getElementById('oxigeno').textContent = ox;
         document.getElementById('presion').textContent = systolic + "/" + diastolic;
         document.getElementById('pasos').textContent = pasos.toLocaleString();
         document.getElementById('temperatura').textContent = temp;
+        
+        // Actualizar pantalla 3 (solo presión cardíaca)
+        document.getElementById('heartRateDisplay').textContent = bpm + " BPM";
         
         // Alertas inteligentes
         checkVitalAlerts(bpm, ox, systolic, diastolic, temp);
@@ -451,15 +413,17 @@
         const oxElement = document.getElementById('oxigeno');
         const presionElement = document.getElementById('presion');
         const tempElement = document.getElementById('temperatura');
+        const heartRateDisplayElement = document.getElementById('heartRateDisplay');
         
         // Resetear alertas
-        [bpmElement, oxElement, presionElement, tempElement].forEach(el => {
+        [bpmElement, oxElement, presionElement, tempElement, heartRateDisplayElement].forEach(el => {
             el.classList.remove('vital-alert');
         });
         
         // Verificar alertas
         if (bpm > config.bpmThreshold || bpm < 50) {
             bpmElement.classList.add('vital-alert');
+            heartRateDisplayElement.classList.add('vital-alert');
             sendAlert(`⚠️ Frecuencia cardíaca anormal: ${bpm} BPM`);
         }
         
@@ -501,7 +465,22 @@
         const now = new Date();
         const h = now.getHours().toString().padStart(2, '0');
         const m = now.getMinutes().toString().padStart(2, '0');
-        document.getElementById('clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${h}:${m}`;
+        const timeString = `${h}:${m}`;
+        
+        // Actualizar reloj en topbar
+        document.getElementById('clock').innerHTML = `<i class="fa-regular fa-clock"></i> ${timeString}`;
+        
+        // Actualizar pantalla 2 (solo hora)
+        document.getElementById('clockDisplay2').textContent = timeString;
+        
+        // Actualizar fecha en pantalla 2
+        const days = ['DOM', 'LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'];
+        const dayName = days[now.getDay()];
+        const day = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const year = now.getFullYear().toString().slice(-2);
+        const dateString = `${dayName} ${day}/${month}/${year}`;
+        document.getElementById('dateDisplay2').textContent = dateString;
         
         // Verificar recordatorios de medicación
         checkMedicationReminders(h, m);
