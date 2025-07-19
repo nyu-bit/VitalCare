@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VitalCare Watch - Galaxy Style MVP</title>
+    <!-- Font Awesome para iconos bonitos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        /* Variables CSS para colores y fuentes */
+        :root {
+            --primary-bg: #000000;
+            --secondary-bg: #1a1a1a;
+            --accent-color: #00d4ff;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --success-color: #00ff88;
+            --warning-color: #ffaa00;
+            --danger-color: #ff4444;
+            --border-radius: 50%;
+            --font-small: 12px;
+            --font-medium: 16px;
+            --font-large: 20px;
+            --font-xl: 28px;
+            --animation-speed: 0.3s;
+        }
+
+        /* Modo alto contraste */
+        .high-contrast {
+            --primary-bg: #000000;
+            --secondary-bg: #000000;
+            --text-primary: #ffffff;
+            --text-secondary: #ffffff;
+            --accent-color: #ffffff;
+            --border-color: #ffffff;
+        }
+
+        /* Tamaño de fuente grande */
+        .large-font {
+            --font-small: 16px;
+            --font-medium: 20px;
+            --font-large: 24px;
+            --font-xl: 32px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--primary-bg);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-primary);
+        }
+
+        /* Contenedor principal del reloj estilo Galaxy Watch */
+        .watch-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+            border-radius: var(--border-radius);
+            border: 6px solid #333333;
+            box-shadow: 
+                0 0 30px rgba(0, 212, 255, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.5),
+                0 0 60px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all var(--animation-speed) ease;
+        }
+
+        .watch-container:hover {
+            box-shadow: 
+                0 0 40px rgba(0, 212, 255, 0.4),
+                inset 0 0 20px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Header con hora, batería y conexión siempre visible */
+        .watch-header {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 25px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin: 0 20px;
+            height: 35px;
+            pointer-events: auto;
+        }
+
+        .current-time {
+            font-size: var(--font-medium);
+            font-weight: 700;
+            color: var(--text-primary);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .status-indicators {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .battery-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: var(--font-small);
+            color: var(--success-color);
+        }
+
+        .connection-indicator {
+            color: var(--accent-color);
+            font-size: var(--font-small);
+        }
+
+        /* Pantalla principal del reloj */
+        .watch-screen {
+            flex: 1;
+            position: relative;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background: var(--secondary-bg);
+            background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=400&fit=crop&crop=center');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .watch-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Vista actual */
+        .view {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 25px 80px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            transition: all var(--animation-speed) ease;
+            overflow-y: auto;
+            z-index: 10;
+            pointer-events: auto;
+        }
+
+        .view.active {
+            display: flex;
+            animation: slideIn var(--animation-speed) ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .view-title {
+            font-size: var(--font-medium);
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Botones grandes y accesibles */
+        .button {
+            background: linear-gradient(135deg, var(--accent-color) 0%, #0099cc 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 16px;
+            margin: 4px;
+            font-size: var(--font-small);
+            font-weight: 600;
+            color: var(--primary-bg);
+            cursor: pointer;
+            transition: all var(--animation-speed) ease;
+            box-shadow: 0 3px 12px rgba(0, 212, 255, 0.3);
+            min-width: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            z-index: 15;
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .button:hover, .button:focus {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+            outline: 2px solid var(--accent-color);
+        }
+
+        .button:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .button.danger {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #cc0000 100%);
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+        }
+
+        .button.success {
+            background: linear-gradient(135deg, var(--success-color) 0%, #00cc66 100%);
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .button.secondary {
+            background: linear-gradient(135deg, #666666 0%, #555555 100%);
+            box-shadow: 0 4px 15px rgba(102, 102, 102, 0.3);
+        }
+
+        /* Datos de signos vitales */
+        .vital-data {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin: 8px 0;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .vital-item {
+            background: var(--secondary-bg);
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        .vital-value {
+            font-size: var(--font-small);
+            font-weight: bold;
+            color: var(--accent-color);
+            margin-bottom: 2px;
+        }
+
+        .vital-label {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }        /* Lista de elementos */
+        .item-list {
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .list-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 8px;
+            margin: 4px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all var(--animation-speed) ease;
+            cursor: pointer;
+            z-index: 12;
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .list-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .list-item-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .list-item-text {
+            font-size: 11px;
+            color: var(--text-primary);
+        }
+
+        .list-item-time {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* Navegación inferior */
+        .watch-navigation {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 8px;
+            z-index: 1000;
+            pointer-events: auto;
+        }
+
+        .nav-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            transition: all var(--animation-speed) ease;
+            z-index: 1001;
+            pointer-events: auto;
+        }
+
+        .nav-button:hover, .nav-button:focus {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+            transform: scale(1.1);
+            outline: none;
+        }
+
+        .nav-button.active {
+            background: var(--accent-color);
+            color: var(--primary-bg);
+        }
+
+        /* Alertas y notificaciones */
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--secondary-bg);
+            border: 2px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 15px 20px;
+            font-size: var(--font-medium);
+            font-weight: 600;
+            color: var(--text-primary);
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.3);
+            z-index: 1000;
+            animation: alertSlide 0.5s ease;
+            max-width: 300px;
+        }
+
+        @keyframes alertSlide {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Marca VitalCare */
+        .vitalcare-brand {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: var(--font-xl);
+            font-weight: 700;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .vitalcare-brand i {
+            color: var(--danger-color);
+            margin-right: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .watch-container {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .view {
+                padding: 55px 20px 70px;
+            }
+            
+            .button {
+                min-width: 140px;
+                font-size: 11px;
+                padding: 8px 14px;
+            }
+            
+            .vital-data {
+                max-width: 250px;
+            }
+            
+            .item-list {
+                max-width: 260px;
+            }
+        }
+
+        /* Accesibilidad ARIA y navegación por teclado */
+        *:focus {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Estados de medicación */
+        .medication-taken {
+            background: rgba(0, 255, 136, 0.2) !important;
+            border-color: var(--success-color) !important;
+        }
+
+        .medication-pending {
+            background: rgba(255, 170, 0, 0.2) !important;
+            border-color: var(--warning-color) !important;
+        }
+
+        /* Animaciones para transiciones */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .bounce {
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenedor principal del VitalCare Watch -->
+    <div class="watch-container" id="watchContainer">
+        <!-- Marca VitalCare -->
+        <div class="vitalcare-brand">
+            <i class="fa-solid fa-heart-pulse"></i>VitalCare Watch
+        </div>
+        
+        <!-- Header siempre visible con hora, batería y conexión -->
+        <header class="watch-header" aria-label="Estado del reloj">
+            <div class="current-time" id="currentTime">12:34</div>
+            <div class="status-indicators">
+                <div class="battery-indicator" aria-label="Nivel de batería">
+                    <i class="fa-solid fa-battery-three-quarters"></i>
+                    <span id="batteryLevel">87%</span>
+                </div>
+                <div class="connection-indicator" aria-label="Estado de conexión">
+                    <i class="fa-solid fa-wifi" id="connectionIcon"></i>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Pantalla principal del reloj -->
+        <main class="watch-screen" role="main">
+            
+            <!-- Vista Home -->
+            <div class="view active" id="homeView" role="tabpanel" aria-labelledby="homeTab">
+                <h1 class="view-title">VitalCare Home</h1>
+                <div class="vital-data">
+                    <div class="vital-item">
+                        <div class="vital-value" id="homeHeartRate">72</div>
+                        <div class="vital-label">BPM</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="homeSteps">3,247</div>
+                        <div class="vital-label">Pasos</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="homeMessages">3</div>
+                        <div class="vital-label">Mensajes</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="homeMeds">2</div>
+                        <div class="vital-label">Medicinas</div>
+                    </div>
+                </div>
+                <button class="button danger" onclick="triggerSOS()" aria-label="Botón de emergencia SOS">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                    SOS EMERGENCIA
+                </button>
+            </div>
+
+            <!-- Vista Signos Vitales -->
+            <div class="view" id="vitalsView" role="tabpanel" aria-labelledby="vitalsTab">
+                <h2 class="view-title">Signos Vitales</h2>
+                <div class="vital-data">
+                    <div class="vital-item">
+                        <div class="vital-value" id="heartRate">72</div>
+                        <div class="vital-label">❤️ BPM</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="bloodPressure">120/80</div>
+                        <div class="vital-label">🩺 mmHg</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="oxygenSat">98</div>
+                        <div class="vital-label">🫁 SpO2%</div>
+                    </div>
+                    <div class="vital-item">
+                        <div class="vital-value" id="steps">3,247</div>
+                        <div class="vital-label">👟 Pasos</div>
+                    </div>
+                </div>
+                <button class="button secondary" onclick="refreshVitals()" aria-label="Actualizar signos vitales">
+                    <i class="fa-solid fa-sync-alt"></i>
+                    Actualizar
+                </button>
+            </div>
+
+            <!-- Vista Medicación -->
+            <div class="view" id="medicationView" role="tabpanel" aria-labelledby="medicationTab">
+                <h2 class="view-title">Medicación</h2>
+                <div class="item-list" id="medicationList">
+                    <div class="list-item medication-pending" data-med-id="1">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-pills"></i>
+                            <div>
+                                <div class="list-item-text">Aspirina 100mg</div>
+                                <div class="list-item-time">08:00 AM</div>
+                            </div>
+                        </div>
+                        <button class="button success" onclick="markMedicationTaken(1)" aria-label="Marcar como tomado">
+                            Tomado
+                        </button>
+                    </div>
+                    <div class="list-item medication-pending" data-med-id="2">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-capsules"></i>
+                            <div>
+                                <div class="list-item-text">Vitamina D</div>
+                                <div class="list-item-time">12:00 PM</div>
+                            </div>
+                        </div>
+                        <button class="button success" onclick="markMedicationTaken(2)" aria-label="Marcar como tomado">
+                            Tomado
+                        </button>
+                    </div>
+                    <div class="list-item medication-taken" data-med-id="3">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <div>
+                                <div class="list-item-text">Omega 3</div>
+                                <div class="list-item-time">06:00 AM - ✅ Tomado</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Mensajes -->
+            <div class="view" id="messagesView" role="tabpanel" aria-labelledby="messagesTab">
+                <h2 class="view-title">Mensajes</h2>
+                <div class="item-list" id="messagesList">
+                    <div class="list-item" onclick="playMessage(1)">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-microphone"></i>
+                            <div>
+                                <div class="list-item-text">Mensaje de María</div>
+                                <div class="list-item-time">Hace 2 horas</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <div class="list-item" onclick="playMessage(2)">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-envelope"></i>
+                            <div>
+                                <div class="list-item-text">Recordatorio médico</div>
+                                <div class="list-item-time">Hace 5 horas</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-eye"></i>
+                    </div>
+                    <div class="list-item" onclick="playMessage(3)">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-heart"></i>
+                            <div>
+                                <div class="list-item-text">Mensaje de Juan</div>
+                                <div class="list-item-time">Ayer</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                </div>
+                <button class="button" onclick="recordMessage()" aria-label="Grabar nuevo mensaje">
+                    <i class="fa-solid fa-microphone"></i>
+                    Grabar Mensaje
+                </button>
+            </div>
+
+            <!-- Vista SOS -->
+            <div class="view" id="sosView" role="tabpanel" aria-labelledby="sosTab">
+                <h2 class="view-title">🚨 Emergencia SOS</h2>
+                <button class="button danger" onclick="triggerSOS()" aria-label="Activar emergencia SOS">
+                    <i class="fa-solid fa-exclamation-triangle"></i>
+                    ACTIVAR SOS
+                </button>
+                <div class="item-list">
+                    <div class="list-item">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-phone"></i>
+                            <div>
+                                <div class="list-item-text">Llamar a emergencias</div>
+                                <div class="list-item-time">911</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-user-nurse"></i>
+                            <div>
+                                <div class="list-item-text">Contactar tutor</div>
+                                <div class="list-item-time">María (+56 9 1234 5678)</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-item">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <div>
+                                <div class="list-item-text">Ubicación GPS Actual</div>
+                                <div class="list-item-time" id="currentLocation">Presiona SOS para obtener</div>
+                            </div>
+                        </div>
+                        <button class="button secondary" onclick="getCurrentLocation()" style="min-width: 60px; padding: 6px 10px; font-size: 10px;">
+                            GPS
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Vista Ajustes -->
+            <div class="view" id="settingsView" role="tabpanel" aria-labelledby="settingsTab">
+                <h2 class="view-title">Ajustes</h2>
+                <div class="item-list">
+                    <div class="list-item" onclick="toggleHighContrast()">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-adjust"></i>
+                            <div>
+                                <div class="list-item-text">Alto Contraste</div>
+                                <div class="list-item-time">Mejorar visibilidad</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-toggle-off" id="contrastToggle"></i>
+                    </div>
+                    <div class="list-item" onclick="toggleLargeFont()">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-font"></i>
+                            <div>
+                                <div class="list-item-text">Texto Grande</div>
+                                <div class="list-item-time">Fuente más legible</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-toggle-off" id="fontToggle"></i>
+                    </div>
+                    <div class="list-item" onclick="testVibration()">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-mobile-alt"></i>
+                            <div>
+                                <div class="list-item-text">Probar Vibración</div>
+                                <div class="list-item-time">Feedback táctil</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-play"></i>
+                    </div>
+                    <div class="list-item" onclick="showDeviceInfo()">
+                        <div class="list-item-content">
+                            <i class="fa-solid fa-info-circle"></i>
+                            <div>
+                                <div class="list-item-text">Info del Dispositivo</div>
+                                <div class="list-item-time">Versión y estado</div>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- Navegación inferior -->
+        <nav class="watch-navigation" role="tablist" aria-label="Navegación principal">
+            <button class="nav-button active" onclick="showView('home')" role="tab" id="homeTab" aria-controls="homeView" aria-selected="true" aria-label="Inicio">
+                <i class="fa-solid fa-home"></i>
+            </button>
+            <button class="nav-button" onclick="showView('vitals')" role="tab" id="vitalsTab" aria-controls="vitalsView" aria-selected="false" aria-label="Signos vitales">
+                <i class="fa-solid fa-heartbeat"></i>
+            </button>
+            <button class="nav-button" onclick="showView('medication')" role="tab" id="medicationTab" aria-controls="medicationView" aria-selected="false" aria-label="Medicación">
+                <i class="fa-solid fa-pills"></i>
+            </button>
+            <button class="nav-button" onclick="showView('messages')" role="tab" id="messagesTab" aria-controls="messagesView" aria-selected="false" aria-label="Mensajes">
+                <i class="fa-solid fa-comment"></i>
+            </button>
+            <button class="nav-button" onclick="showView('sos')" role="tab" id="sosTab" aria-controls="sosView" aria-selected="false" aria-label="Emergencia SOS">
+                <i class="fa-solid fa-exclamation-triangle"></i>
+            </button>
+            <button class="nav-button" onclick="showView('settings')" role="tab" id="settingsTab" aria-controls="settingsView" aria-selected="false" aria-label="Ajustes">
+                <i class="fa-solid fa-cog"></i>
+            </button>
+        </nav>
+    </div>
+
+    <script>
+        // ===== VARIABLES GLOBALES =====
+        let currentView = 'home';
+        let highContrastMode = false;
+        let largeFontMode = false;
+        let currentLocation = { lat: -33.4489, lng: -70.6693, address: "Santiago Centro, Chile" };
+        let medications = [
+            { id: 1, name: "Aspirina 100mg", time: "08:00 AM", taken: false },
+            { id: 2, name: "Vitamina D", time: "12:00 PM", taken: false },
+            { id: 3, name: "Omega 3", time: "06:00 AM", taken: true }
+        ];
+        let messages = [
+            { id: 1, sender: "María", content: "Hola querido, ¿cómo te sientes hoy?", time: "Hace 2 horas", type: "voice" },
+            { id: 2, sender: "Dr. González", content: "Recordatorio: Cita médica mañana 3:00 PM", time: "Hace 5 horas", type: "text" },
+            { id: 3, sender: "Juan", content: "Te quiero mucho, cuídate", time: "Ayer", type: "voice" }
+        ];
+
+        // ===== FUNCIONES PRINCIPALES =====
+
+        // Actualizar hora actual
+        function updateCurrentTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('es-ES', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                hour12: false 
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // Actualizar indicadores de estado
+        function updateStatusIndicators() {
+            // Simular nivel de batería que decrece lentamente
+            const battery = Math.max(20, Math.floor(Math.random() * 100));
+            document.getElementById('batteryLevel').textContent = `${battery}%`;
+            
+            // Cambiar icono de batería según el nivel
+            const batteryIcon = document.querySelector('.battery-indicator i');
+            if (battery > 75) batteryIcon.className = 'fa-solid fa-battery-full';
+            else if (battery > 50) batteryIcon.className = 'fa-solid fa-battery-three-quarters';
+            else if (battery > 25) batteryIcon.className = 'fa-solid fa-battery-half';
+            else batteryIcon.className = 'fa-solid fa-battery-quarter';
+            
+            // Simular estado de conexión
+            const connected = Math.random() > 0.1; // 90% conectado
+            const connectionIcon = document.getElementById('connectionIcon');
+            if (connected) {
+                connectionIcon.className = 'fa-solid fa-wifi';
+                connectionIcon.style.color = 'var(--success-color)';
+            } else {
+                connectionIcon.className = 'fa-solid fa-wifi-slash';
+                connectionIcon.style.color = 'var(--danger-color)';
+            }
+        }
+
+        // Navegación entre vistas
+        function showView(viewName) {
+            // Ocultar todas las vistas
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Desactivar todos los botones de navegación
+            document.querySelectorAll('.nav-button').forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            
+            // Mostrar vista seleccionada
+            const targetView = document.getElementById(viewName + 'View');
+            if (targetView) {
+                targetView.classList.add('active');
+                currentView = viewName;
+                
+                // Activar botón correspondiente
+                const activeBtn = document.getElementById(viewName + 'Tab');
+                if (activeBtn) {
+                    activeBtn.classList.add('active');
+                    activeBtn.setAttribute('aria-selected', 'true');
+                }
+                
+                // Vibración suave de feedback
+                simulateVibration('soft');
+                
+                // Actualizar datos específicos de la vista
+                if (viewName === 'vitals') updateVitals();
+                if (viewName === 'home') updateHomeData();
+            }
+        }
+
+        // ===== FUNCIONES DE SIGNOS VITALES =====
+        
+        function updateVitals() {
+            // Generar valores realistas con variaciones
+            const heartRate = Math.floor(Math.random() * 40) + 60; // 60-100 BPM
+            const systolic = Math.floor(Math.random() * 40) + 110; // 110-150
+            const diastolic = Math.floor(Math.random() * 20) + 70; // 70-90
+            const oxygenSat = Math.floor(Math.random() * 5) + 95; // 95-100%
+            const steps = Math.floor(Math.random() * 5000) + 2000; // 2000-7000
+            
+            // Actualizar elementos
+            document.getElementById('heartRate').textContent = heartRate;
+            document.getElementById('bloodPressure').textContent = `${systolic}/${diastolic}`;
+            document.getElementById('oxygenSat').textContent = oxygenSat;
+            document.getElementById('steps').textContent = steps.toLocaleString();
+            
+            // Verificar valores anormales
+            if (heartRate > 100 || heartRate < 60) {
+                showAlert("⚠️ Frecuencia cardíaca anormal detectada", "warning");
+            }
+            if (oxygenSat < 95) {
+                showAlert("⚠️ Saturación de oxígeno baja", "danger");
+            }
+            
+            // Actualizar home también
+            document.getElementById('homeHeartRate').textContent = heartRate;
+            document.getElementById('homeSteps').textContent = steps.toLocaleString();
+        }
+
+        function refreshVitals() {
+            showAlert("📊 Actualizando signos vitales...", "info");
+            document.querySelector('#vitalsView .button').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Actualizando...';
+            
+            setTimeout(() => {
+                updateVitals();
+                document.querySelector('#vitalsView .button').innerHTML = '<i class="fa-solid fa-sync-alt"></i> Actualizar';
+                showAlert("✅ Signos vitales actualizados", "success");
+            }, 2000);
+        }
+
+        // ===== FUNCIONES DE MEDICACIÓN =====
+        
+        function markMedicationTaken(medId) {
+            const medication = medications.find(med => med.id === medId);
+            if (medication && !medication.taken) {
+                medication.taken = true;
+                
+                // Actualizar interfaz
+                const medElement = document.querySelector(`[data-med-id="${medId}"]`);
+                medElement.classList.remove('medication-pending');
+                medElement.classList.add('medication-taken');
+                
+                const content = medElement.querySelector('.list-item-content');
+                content.innerHTML = `
+                    <i class="fa-solid fa-check-circle"></i>
+                    <div>
+                        <div class="list-item-text">${medication.name}</div>
+                        <div class="list-item-time">${medication.time} - ✅ Tomado</div>
+                    </div>
+                `;
+                
+                // Remover botón
+                const button = medElement.querySelector('.button');
+                if (button) button.remove();
+                
+                // Feedback visual
+                medElement.classList.add('bounce');
+                showAlert("✅ Medicación registrada como tomada", "success");
+                simulateVibration('medium');
+                
+                // Actualizar contador en home
+                updateHomeData();
+            }
+        }
+
+        // ===== FUNCIONES DE MENSAJES =====
+        
+        function playMessage(messageId) {
+            const message = messages.find(msg => msg.id === messageId);
+            if (message) {
+                if (message.type === 'voice') {
+                    showAlert("🎵 Reproduciendo mensaje de voz...", "info");
+                    // Simular beep de audio
+                    playBeep();
+                    
+                    setTimeout(() => {
+                        showAlert(`🔊 "${message.content}"`, "info");
+                    }, 1000);
+                } else {
+                    showAlert(`📄 ${message.content}`, "info");
+                }
+                simulateVibration('soft');
+            }
+        }
+
+        function recordMessage() {
+            showAlert("🎤 Grabando mensaje...", "info");
+            simulateVibration('soft');
+            
+            // Simular grabación
+            let countdown = 5;
+            const interval = setInterval(() => {
+                showAlert(`🎤 Grabando... ${countdown}s`, "info");
+                countdown--;
+                
+                if (countdown < 0) {
+                    clearInterval(interval);
+                    showAlert("✅ Mensaje grabado y enviado", "success");
+                    playBeep();
+                }
+            }, 1000);
+        }
+
+        function playBeep() {
+            // Simular beep con Audio API o console
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                
+                oscillator.start();
+                oscillator.stop(audioContext.currentTime + 0.3);
+            } catch (e) {
+                console.log("🔊 BEEP - Audio reproducido");
+            }
+        }
+
+        // ===== FUNCIÓN SOS PRINCIPAL =====
+        
+        function triggerSOS() {
+            showAlert("🚨 ACTIVANDO EMERGENCIA SOS", "danger");
+            simulateVibration('emergency');
+            
+            // Cambiar a vista SOS si no está activa
+            if (currentView !== 'sos') {
+                showView('sos');
+            }
+            
+            // Activar geolocalización real
+            getCurrentLocation();
+            
+            // Mostrar progreso de activación
+            let progress = 0;
+            const sosInterval = setInterval(() => {
+                progress += 20;
+                showAlert(`🚨 SOS ACTIVANDO... ${progress}%`, "danger");
+                
+                if (progress >= 100) {
+                    clearInterval(sosInterval);
+                    
+                    showAlert("📞 Contactando servicios de emergencia...", "warning");
+                    showAlert("👨‍⚕️ Tutor notificado automáticamente", "success");
+                    showAlert("📍 Ubicación GPS enviada al tutor", "info");
+                    
+                    // Simular llamada automática al tutor
+                    setTimeout(() => {
+                        showAlert("📞 Llamando automáticamente al tutor...", "warning");
+                        playBeep();
+                    }, 2000);
+                }
+            }, 1000);
+        }
+
+        // ===== FUNCIÓN DE GEOLOCALIZACIÓN =====
+        
+        function getCurrentLocation() {
+            if (navigator.geolocation) {
+                showAlert("📍 Obteniendo ubicación GPS...", "info");
+                
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const accuracy = position.coords.accuracy;
+                        
+                        // Actualizar ubicación actual
+                        currentLocation.lat = lat;
+                        currentLocation.lng = lng;
+                        
+                        // Mostrar ubicación en la vista SOS
+                        document.getElementById('currentLocation').textContent = 
+                            `${lat.toFixed(6)}, ${lng.toFixed(6)} (±${Math.round(accuracy)}m)`;
+                        
+                        showAlert(`📍 Ubicación obtenida: ${lat.toFixed(4)}, ${lng.toFixed(4)}`, "success");
+                        
+                        // Simular envío al tutor
+                        sendLocationToTutor(lat, lng, accuracy);
+                        
+                        // Obtener dirección legible (simulado)
+                        getReverseGeocoding(lat, lng);
+                    },
+                    function(error) {
+                        let errorMessage = "❌ Error obteniendo ubicación: ";
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage += "Permisos de ubicación denegados";
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage += "Ubicación no disponible";
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage += "Tiempo de espera agotado";
+                                break;
+                            default:
+                                errorMessage += "Error desconocido";
+                                break;
+                        }
+                        showAlert(errorMessage, "danger");
+                        
+                        // Usar ubicación simulada como respaldo
+                        const lat = currentLocation.lat + (Math.random() - 0.5) * 0.01;
+                        const lng = currentLocation.lng + (Math.random() - 0.5) * 0.01;
+                        document.getElementById('currentLocation').textContent = 
+                            `${lat.toFixed(6)}, ${lng.toFixed(6)} (simulado)`;
+                        showAlert("📍 Usando ubicación aproximada", "warning");
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            } else {
+                showAlert("❌ Geolocalización no soportada en este dispositivo", "danger");
+                // Usar ubicación simulada
+                const lat = currentLocation.lat + (Math.random() - 0.5) * 0.01;
+                const lng = currentLocation.lng + (Math.random() - 0.5) * 0.01;
+                document.getElementById('currentLocation').textContent = 
+                    `${lat.toFixed(6)}, ${lng.toFixed(6)} (simulado)`;
+                showAlert("📍 Usando ubicación aproximada", "warning");
+            }
+        }
+
+        function sendLocationToTutor(lat, lng, accuracy) {
+            // Simular envío de ubicación al tutor
+            showAlert("� Enviando ubicación al tutor...", "info");
+            
+            setTimeout(() => {
+                const locationData = {
+                    latitude: lat,
+                    longitude: lng,
+                    accuracy: accuracy,
+                    timestamp: new Date().toISOString(),
+                    emergency: true,
+                    user: "VitalCare Watch - Usuario",
+                    tutorContact: "María (+56 9 1234 5678)"
+                };
+                
+                console.log("🚨 DATOS DE EMERGENCIA ENVIADOS:", locationData);
+                
+                // Simular confirmación del tutor
+                setTimeout(() => {
+                    showAlert("✅ Tutor ha recibido tu ubicación", "success");
+                    showAlert("� Tutor te llamará en breve", "info");
+                }, 2000);
+                
+                // Crear enlace de Google Maps
+                const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+                console.log(`🗺️ Ver ubicación en Google Maps: ${mapsUrl}`);
+                
+            }, 1500);
+        }
+
+        function getReverseGeocoding(lat, lng) {
+            // Simular obtención de dirección legible
+            const addresses = [
+                "Av. Providencia 1234, Providencia, Santiago",
+                "Av. Las Condes 5678, Las Condes, Santiago", 
+                "Av. Alameda 910, Santiago Centro, Santiago",
+                "Av. Apoquindo 1112, Las Condes, Santiago",
+                "Av. Vicuña Mackenna 1314, Ñuñoa, Santiago"
+            ];
+            
+            setTimeout(() => {
+                const randomAddress = addresses[Math.floor(Math.random() * addresses.length)];
+                currentLocation.address = randomAddress;
+                
+                // Actualizar display con dirección
+                const locationElement = document.getElementById('currentLocation');
+                locationElement.innerHTML = `
+                    <div style="font-size: 9px; line-height: 1.2;">
+                        <div>${lat.toFixed(6)}, ${lng.toFixed(6)}</div>
+                        <div style="margin-top: 2px;">${randomAddress}</div>
+                    </div>
+                `;
+                
+                showAlert(`📍 Dirección: ${randomAddress}`, "info");
+            }, 2000);
+        }
+
+        // ===== FUNCIONES DE CONFIGURACIÓN =====
+        
+        function toggleHighContrast() {
+            highContrastMode = !highContrastMode;
+            const body = document.body;
+            const toggle = document.getElementById('contrastToggle');
+            
+            if (highContrastMode) {
+                body.classList.add('high-contrast');
+                toggle.className = 'fa-solid fa-toggle-on';
+                showAlert("🎨 Alto contraste activado", "success");
+            } else {
+                body.classList.remove('high-contrast');
+                toggle.className = 'fa-solid fa-toggle-off';
+                showAlert("🎨 Alto contraste desactivado", "info");
+            }
+            simulateVibration('soft');
+        }
+
+        function toggleLargeFont() {
+            largeFontMode = !largeFontMode;
+            const body = document.body;
+            const toggle = document.getElementById('fontToggle');
+            
+            if (largeFontMode) {
+                body.classList.add('large-font');
+                toggle.className = 'fa-solid fa-toggle-on';
+                showAlert("📝 Texto grande activado", "success");
+            } else {
+                body.classList.remove('large-font');
+                toggle.className = 'fa-solid fa-toggle-off';
+                showAlert("📝 Texto grande desactivado", "info");
+            }
+            simulateVibration('soft');
+        }
+
+        function testVibration() {
+            showAlert("📳 Probando vibración...", "info");
+            simulateVibration('test');
+        }
+
+        function showDeviceInfo() {
+            const info = `
+                🔧 VitalCare Watch v1.0
+                🔋 Batería: ${document.getElementById('batteryLevel').textContent}
+                📡 Estado: Conectado
+                📍 GPS: Activo
+                💾 Memoria: 512MB disponible
+            `;
+            showAlert(info, "info");
+        }
+
+        // ===== FUNCIONES DE UTILIDAD =====
+        
+        function simulateVibration(type) {
+            let pattern = [];
+            
+            switch (type) {
+                case 'soft':
+                    pattern = [100];
+                    break;
+                case 'medium':
+                    pattern = [200, 100, 200];
+                    break;
+                case 'emergency':
+                    pattern = [300, 100, 300, 100, 300];
+                    break;
+                case 'test':
+                    pattern = [100, 100, 200, 100, 300];
+                    break;
+                default:
+                    pattern = [100];
+            }
+            
+            // Vibración real si está disponible
+            if (navigator.vibrate) {
+                navigator.vibrate(pattern);
+            }
+            
+            // Log para debugging
+            console.log(`📳 Vibrar: ${type} - Patrón: [${pattern.join(', ')}]`);
+        }
+
+        function showAlert(message, type = 'info') {
+            // Remover alertas anteriores
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            
+            const alert = document.createElement('div');
+            alert.className = 'alert fade-in';
+            alert.textContent = message;
+            
+            // Estilos según tipo
+            switch (type) {
+                case 'success':
+                    alert.style.borderColor = 'var(--success-color)';
+                    break;
+                case 'warning':
+                    alert.style.borderColor = 'var(--warning-color)';
+                    break;
+                case 'danger':
+                    alert.style.borderColor = 'var(--danger-color)';
+                    break;
+                default:
+                    alert.style.borderColor = 'var(--accent-color)';
+            }
+            
+            document.body.appendChild(alert);
+            
+            // Auto-remover después de 4 segundos
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 4000);
+        }
+
+        function updateHomeData() {
+            // Contar mensajes no leídos
+            const unreadMessages = messages.filter(msg => !msg.read).length;
+            document.getElementById('homeMessages').textContent = unreadMessages;
+            
+            // Contar medicaciones pendientes
+            const pendingMeds = medications.filter(med => !med.taken).length;
+            document.getElementById('homeMeds').textContent = pendingMeds;
+        }
+
+        function updateLocation() {
+            // Simular cambio de ubicación cada 30 segundos
+            const latVar = (Math.random() - 0.5) * 0.001;
+            const lngVar = (Math.random() - 0.5) * 0.001;
+            
+            currentLocation.lat += latVar;
+            currentLocation.lng += lngVar;
+            
+            console.log(`📍 Ubicación actualizada: ${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}`);
+        }
+
+        // ===== NAVEGACIÓN POR TECLADO =====
+        
+        document.addEventListener('keydown', function(e) {
+            const views = ['home', 'vitals', 'medication', 'messages', 'sos', 'settings'];
+            const currentIndex = views.indexOf(currentView);
+            
+            switch (e.key) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    const prevIndex = currentIndex > 0 ? currentIndex - 1 : views.length - 1;
+                    showView(views[prevIndex]);
+                    break;
+                    
+                case 'ArrowRight':
+                    e.preventDefault();
+                    const nextIndex = (currentIndex + 1) % views.length;
+                    showView(views[nextIndex]);
+                    break;
+                    
+                case 'Enter':
+                case ' ':
+                    e.preventDefault();
+                    // Activar elemento enfocado
+                    if (document.activeElement && document.activeElement.click) {
+                        document.activeElement.click();
+                    }
+                    break;
+                    
+                case 'Escape':
+                    e.preventDefault();
+                    showView('home');
+                    break;
+            }
+        });
+
+        // ===== INICIALIZACIÓN =====
+        
+        function initializeWatch() {
+            console.log("🚀 Inicializando VitalCare Watch...");
+            
+            // Actualizar hora inmediatamente y cada segundo
+            updateCurrentTime();
+            setInterval(updateCurrentTime, 1000);
+            
+            // Actualizar indicadores cada 5 segundos
+            updateStatusIndicators();
+            setInterval(updateStatusIndicators, 5000);
+            
+            // Actualizar signos vitales cada 10 segundos
+            setInterval(updateVitals, 10000);
+            
+            // Actualizar ubicación cada 30 segundos
+            setInterval(updateLocation, 30000);
+            
+            // Datos iniciales
+            updateVitals();
+            updateHomeData();
+            
+            // Configurar ARIA
+            document.querySelectorAll('.nav-button').forEach((btn, index) => {
+                btn.setAttribute('tabindex', index === 0 ? '0' : '-1');
+            });
+            
+            console.log("✅ VitalCare Watch inicializado correctamente");
+            showAlert("✅ VitalCare Watch listo para usar", "success");
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initializeWatch);
+        
+        // Manejar cambios de visibilidad para optimizar batería
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                console.log("⏸️ Reloj en modo suspensión");
+            } else {
+                console.log("▶️ Reloj activo");
+                updateCurrentTime();
+                updateStatusIndicators();
+            }
+        });
+    </script>
+</body>
+</html>
